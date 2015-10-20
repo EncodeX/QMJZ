@@ -18,4 +18,9 @@
 	</style>
 
 
+	<style name="AppTheme.Button.Blue.Borderless" parent="Widget.AppCompat.Button.Borderless.Colored">
+		<item name="android:background">@drawable/btn_blue</item>
+		<item name="android:textColor">@android:color/white</item>
+	</style>
+
 </resources>
