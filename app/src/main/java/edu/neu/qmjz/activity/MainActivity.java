@@ -10,16 +10,26 @@ import android.support.v7.widget.Toolbar;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import edu.neu.qmjz.R;
+import edu.neu.qmjz.adapter.MainPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
+
+	private static int[] MAIN_TAB_ICON = {
+			R.drawable.ic_home,
+			R.drawable.ic_description,
+			R.drawable.ic_assignment,
+			R.drawable.ic_person
+	};
 
 	@InjectView(R.id.app_bar)
 	Toolbar mToolBar;
 	ActionBar mAppBar;
-	@InjectView(R.id.app_bar_tab_layout)
-	TabLayout mAppBarTabLayout;
+	@InjectView(R.id.app_bar_tab)
+	TabLayout mAppBarTab;
 	@InjectView(R.id.view_pager)
 	ViewPager mViewPager;
+
+	MainPagerAdapter mMainPagerAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +41,16 @@ public class MainActivity extends AppCompatActivity {
 		setSupportActionBar(mToolBar);
 		mAppBar = getSupportActionBar();
 
-		mAppBarTabLayout.setupWithViewPager(mViewPager);
-//		mAppBarTabLayout.addTab(mAppBarTabLayout.newTab().setIcon(R.mipmap.ic_launcher));
-//		mAppBarTabLayout.addTab(mAppBarTabLayout.newTab().setIcon(R.mipmap.ic_launcher));
-//		mAppBarTabLayout.addTab(mAppBarTabLayout.newTab().setIcon(R.mipmap.ic_launcher));
+		mMainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
+		mViewPager.setAdapter(mMainPagerAdapter);
+
+		mAppBarTab.setTabMode(TabLayout.MODE_FIXED);
+		mAppBarTab.setupWithViewPager(mViewPager);
+		for(int i=0;i<mAppBarTab.getTabCount();i++){
+			TabLayout.Tab tab = mAppBarTab.getTabAt(i);
+			if(tab!=null){
+				tab.setIcon(MAIN_TAB_ICON[i]);
+			}
+		}
 	}
 }

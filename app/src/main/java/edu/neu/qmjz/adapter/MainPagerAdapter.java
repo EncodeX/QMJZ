@@ -3,6 +3,10 @@ package edu.neu.qmjz.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
+
+import edu.neu.qmjz.fragment.FragmentException;
+import edu.neu.qmjz.fragment.MainFragmentManager;
 
 /**
  * Created with Android Studio.
@@ -18,11 +22,20 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public Fragment getItem(int position) {
-		return null;
+		Fragment fragment;
+		try {
+			fragment = MainFragmentManager.getFragment(position);
+		} catch (FragmentException e) {
+			Log.d("MainPagerAdapter","New fragment is null.");
+			return null;
+		}
+		return fragment;
 	}
 
 	@Override
 	public int getCount() {
-		return 0;
+		return 4;
 	}
+
+
 }
