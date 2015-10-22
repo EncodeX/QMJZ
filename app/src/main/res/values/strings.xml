@@ -1,3 +1,7 @@
 <resources>
 	<string name="app_name">全民家政</string>
+    <string name="title_activity_test_map">TestMap</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>
