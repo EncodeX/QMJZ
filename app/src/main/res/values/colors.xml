@@ -6,6 +6,6 @@
 
     <color name="colorBlue">#3E83D1</color>
     <color name="colorBluePressed">#2196F3</color>
-	<color name="rippleBlack">#66000000</color>
+	<color name="rippleBlack">#1A000000</color>
 	<color name="rippleWhite">#66FFFFFF</color>
 </resources>
