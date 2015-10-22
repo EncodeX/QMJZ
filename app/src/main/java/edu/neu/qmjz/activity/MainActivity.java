@@ -21,6 +21,13 @@ public class MainActivity extends AppCompatActivity {
 			R.drawable.ic_person
 	};
 
+	private static int[] APP_BAR_TITLE = {
+			R.string.main_fragment_title,
+			R.string.receive_fragment_title,
+			R.string.service_list_fragment_title,
+			R.string.account_fragment_title
+	};
+
 	@InjectView(R.id.app_bar)
 	Toolbar mToolBar;
 	ActionBar mAppBar;
@@ -36,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		initView();
+	}
+
+	private void initView(){
 		ButterKnife.inject(this);
 
 		setSupportActionBar(mToolBar);
@@ -52,5 +63,23 @@ public class MainActivity extends AppCompatActivity {
 				tab.setIcon(MAIN_TAB_ICON[i]);
 			}
 		}
+
+		mAppBarTab.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+			@Override
+			public void onTabSelected(TabLayout.Tab tab) {
+				mAppBar.setTitle(getString(APP_BAR_TITLE[tab.getPosition()]));
+				mViewPager.setCurrentItem(tab.getPosition());
+			}
+
+			@Override
+			public void onTabUnselected(TabLayout.Tab tab) {
+
+			}
+
+			@Override
+			public void onTabReselected(TabLayout.Tab tab) {
+
+			}
+		});
 	}
 }

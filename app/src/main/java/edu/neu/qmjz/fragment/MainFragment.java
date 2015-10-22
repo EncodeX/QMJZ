@@ -3,12 +3,17 @@ package edu.neu.qmjz.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import edu.neu.qmjz.R;
+import edu.neu.qmjz.adapter.GrabListAdapter;
 
 /**
  * Created with Android Studio.
@@ -18,6 +23,9 @@ import edu.neu.qmjz.R;
  * Package: edu.neu.qmjz.fragment
  */
 public class MainFragment extends Fragment {
+	@InjectView(R.id.grab_list)
+	RecyclerView mGrabList;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -27,7 +35,11 @@ public class MainFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_main, container, false);
-		Log.v("Main Fragment","Create View");
+		ButterKnife.inject(this, rootView);
+
+		mGrabList.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
+		mGrabList.setAdapter(new GrabListAdapter(inflater.getContext()));
+
 		return rootView;
 	}
 
