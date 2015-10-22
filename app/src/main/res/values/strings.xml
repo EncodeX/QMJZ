@@ -5,3 +5,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 </resources>
+	<string name="main_fragment_title">我的抢单</string>
+	<string name="receive_fragment_title">我的接单</string>
+	<string name="service_list_fragment_title">服务清单</string>
+	<string name="account_fragment_title">个人中心</string>
+</resources>

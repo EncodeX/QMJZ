@@ -14,7 +14,7 @@
 		android:background="?colorPrimary"
 		android:elevation="4dp"
 		app:titleTextColor="@android:color/white"
-		app:title="@string/app_name"/>
+		app:title="@string/main_fragment_title"/>
 	<FrameLayout
 		android:layout_width="wrap_content"
 		android:layout_height="?actionBarSize"
