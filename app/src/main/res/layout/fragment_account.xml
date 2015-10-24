@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/rippleWhite">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:scrollbars="vertical"
+    android:fadingEdge="vertical">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/rippleWhite">
 
     <edu.neu.qmjz.view.RoundImageView
         android:layout_width="wrap_content"
@@ -31,7 +38,6 @@
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
                 android:text="省市区："
-                android:textSize="80px"
                 android:textStyle="bold"
                 android:gravity="center"/>
             <TextView
@@ -40,7 +46,6 @@
                 android:layout_weight="4"
                 android:id="@+id/text_city"
                 android:hint="省市区："
-                android:textSize="80px"
                 android:gravity="center"/>
         </LinearLayout>
         <LinearLayout
@@ -53,7 +58,6 @@
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
                 android:text="ID："
-                android:textSize="80px"
                 android:textStyle="bold"
                 android:gravity="center"/>
             <TextView
@@ -62,7 +66,6 @@
                 android:layout_weight="4"
                 android:id="@+id/text_ID"
                 android:hint="ID："
-                android:textSize="80px"
                 android:gravity="center"/>
         </LinearLayout>
         <LinearLayout
@@ -75,7 +78,6 @@
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
                 android:text="姓名："
-                android:textSize="80px"
                 android:textStyle="bold"
                 android:gravity="center"/>
             <TextView
@@ -84,7 +86,6 @@
                 android:layout_weight="4"
                 android:id="@+id/text_name"
                 android:hint="姓名："
-                android:textSize="80px"
                 android:gravity="center"/>
         </LinearLayout>
         <LinearLayout
@@ -97,7 +98,6 @@
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
                 android:text="联系电话："
-                android:textSize="80px"
                 android:textStyle="bold"
                 android:gravity="center"/>
             <TextView
@@ -106,7 +106,6 @@
                 android:layout_weight="4"
                 android:id="@+id/text_phone"
                 android:hint="联系电话："
-                android:textSize="80px"
                 android:gravity="center"/>
         </LinearLayout>
         <LinearLayout
@@ -119,7 +118,6 @@
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
                 android:text="手机号码："
-                android:textSize="80px"
                 android:textStyle="bold"
                 android:gravity="center"/>
             <TextView
@@ -128,7 +126,6 @@
                 android:layout_weight="4"
                 android:id="@+id/text_tele_number"
                 android:hint="手机号码："
-                android:textSize="80px"
                 android:gravity="center"/>
         </LinearLayout>
         <LinearLayout
@@ -141,7 +138,6 @@
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
                 android:text="通讯地址："
-                android:textSize="80px"
                 android:textStyle="bold"
                 android:gravity="center"/>
             <TextView
@@ -150,7 +146,6 @@
                 android:layout_weight="4"
                 android:id="@+id/text_location"
                 android:hint="通讯地址："
-                android:textSize="80px"
                 android:gravity="center"/>
         </LinearLayout>
     </LinearLayout>
@@ -164,9 +159,7 @@
         android:text="注销登陆"
         android:gravity="center"
         android:textSize="20dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorPrimary"
         android:id="@+id/btn_sign_out"/>
-
-
-
 </RelativeLayout>
+</ScrollView>
