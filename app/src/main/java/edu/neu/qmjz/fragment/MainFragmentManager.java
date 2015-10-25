@@ -24,7 +24,7 @@ public class MainFragmentManager {
 			Fragment newFragment = null;
 			switch (index){
 				case 0:
-					newFragment = new MainFragment();
+					newFragment = new GrabFragment();
 					break;
 				case 1:
 					newFragment = new ReceiveFragment();

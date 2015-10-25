@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,7 @@ import edu.neu.qmjz.adapter.GrabListAdapter;
  * Project: QMJZ
  * Package: edu.neu.qmjz.fragment
  */
-public class MainFragment extends Fragment {
+public class GrabFragment extends Fragment {
 	@InjectView(R.id.grab_list)
 	RecyclerView mGrabList;
 
@@ -34,7 +33,7 @@ public class MainFragment extends Fragment {
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_main, container, false);
+		ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_grab, container, false);
 		ButterKnife.inject(this, rootView);
 
 		mGrabList.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
