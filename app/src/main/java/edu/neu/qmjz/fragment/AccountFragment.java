@@ -30,18 +30,18 @@ import edu.neu.qmjz.utils.NetUtils;
  * Package: edu.neu.qmjz.fragment
  */
 public class AccountFragment extends Fragment{
-	@InjectView(R.id.text_city)
-	TextView text_city;
-	@InjectView(R.id.text_ID)
-	TextView text_ID;
-	@InjectView(R.id.text_location)
-	TextView text_location;
-	@InjectView(R.id.text_name)
-	TextView text_name;
-	@InjectView(R.id.text_phone)
-	TextView text_phone;
-	@InjectView(R.id.text_tele_number)
-	TextView text_tele_number;
+//	@InjectView(R.id.text_city)
+//	TextView text_city;
+//	@InjectView(R.id.text_ID)
+//	TextView text_ID;
+//	@InjectView(R.id.text_location)
+//	TextView text_location;
+//	@InjectView(R.id.text_name)
+//	TextView text_name;
+//	@InjectView(R.id.text_phone)
+//	TextView text_phone;
+//	@InjectView(R.id.text_tele_number)
+//	TextView text_tele_number;
 
 
 	@Override
@@ -55,7 +55,7 @@ public class AccountFragment extends Fragment{
 		ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_account, container, false);
 		queryFromService();
 		ButterKnife.inject(this, rootView);
-		text_city.setText("");
+	//	text_city.setText("");
 		return rootView;
 	}
 

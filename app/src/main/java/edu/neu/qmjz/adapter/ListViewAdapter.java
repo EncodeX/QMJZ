@@ -53,7 +53,7 @@ public class ListViewAdapter extends SimpleAdapter {
 //            holder.info = (TextView)convertView.findViewById(R.id.info);
 //            holder.viewBtn = (Button)convertView.findViewById(R.id.view_btn);
 //            convertView.setTag(holder);
-
+//
 //        }else {
 //
 //            holder = (RecyclerView.ViewHolder)convertView.getTag();
