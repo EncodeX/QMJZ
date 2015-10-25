@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 	@InjectView(R.id.view_pager)
 	ViewPager mViewPager;
 
-	MainPagerAdapter mMainPagerAdapter;
+	private MainPagerAdapter mMainPagerAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

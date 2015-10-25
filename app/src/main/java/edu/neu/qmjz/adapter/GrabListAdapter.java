@@ -2,6 +2,7 @@ package edu.neu.qmjz.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +11,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import edu.neu.qmjz.R;
+import edu.neu.qmjz.bean.Order;
+import edu.neu.qmjz.utils.NetworkServiceManager;
 
 /**
  * Created with Android Studio.
@@ -27,10 +35,12 @@ public class GrabListAdapter extends RecyclerView.Adapter<GrabListAdapter.GrabLi
 	private final LayoutInflater mLayoutInflater;
 	private final Context mContext;
 
+	private List<Order> orderList;
 
 	public GrabListAdapter(Context context) {
 		mContext = context;
 		mLayoutInflater = LayoutInflater.from(context);
+		orderList = new ArrayList<>();
 	}
 
 	@Override
@@ -45,7 +55,7 @@ public class GrabListAdapter extends RecyclerView.Adapter<GrabListAdapter.GrabLi
 
 	@Override
 	public int getItemCount() {
-		return 20;
+		return orderList.size();
 	}
 
 	public static class GrabListViewHolder extends RecyclerView.ViewHolder {
@@ -63,7 +73,21 @@ public class GrabListAdapter extends RecyclerView.Adapter<GrabListAdapter.GrabLi
 			mGrabButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					Toast.makeText(view.getContext(), "onClick--> position = " + getLayoutPosition(), Toast.LENGTH_SHORT).show();
+//					Toast.makeText(view.getContext(), "onClick--> position = " + getLayoutPosition(), Toast.LENGTH_SHORT).show();
+					Log.v("Network Connection", "On Click");
+					NetworkServiceManager serviceManager =
+							new NetworkServiceManager("http://219.216.65.182:8080/NationalService" +
+									"/MobileServantInfoAction?operation=_login");
+					serviceManager.addParameter("servantID", "jacob");
+					serviceManager.addParameter("loginPassword","abc123");
+					serviceManager.setConnectionListener(new NetworkServiceManager.ConnectionListener() {
+						@Override
+						public void onConnectionSucceeded(JSONObject result) {
+							Log.v("Network Connection", "Succeed");
+							Log.v("Network Connection", result.toString());
+						}
+					});
+					serviceManager.sendAction();
 				}
 			});
 			mContactLayout.setOnClickListener(new View.OnClickListener() {
