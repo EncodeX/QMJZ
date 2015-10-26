@@ -165,7 +165,7 @@ public class GrabFragment extends Fragment {
 			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 				if (mPickerAdapter.getDisplayType() == FilterPickerAdapter.DISPLAY_COUNTY) {
 					mCountySelectButton.setText((String) mPickerAdapter.getItem(i));
-//					refreshDeclareList();
+					refreshDeclareList();
 				} else {
 					if (mPickerAdapter.getServiceTypeNode().equals("")) {
 						mPickerAdapter.setServiceTypeNode((String) mPickerAdapter.getItem(i));
@@ -193,7 +193,7 @@ public class GrabFragment extends Fragment {
 	}
 
 	private void refreshDeclareList(){
-		mListAdapter.refreshList(mServiceTypeSelectButton.getText().toString());
+		mListAdapter.refreshList(mCountySelectButton.getText().toString(),mServiceTypeSelectButton.getText().toString());
 	}
 
 	private class PickInitializeListener implements FilterPickerAdapter.OnInitializedListener{

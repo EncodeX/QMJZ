@@ -1,5 +1,8 @@
 package edu.neu.qmjz.bean;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created with Android Studio.
  * Author: Enex Tapper
@@ -22,13 +25,36 @@ public class Declare {
 	private String serviceAddress;
 	private String serviceLongitude;
 	private String serviceLatitude;
-	private int salary;
+	private double salary;
 	private String serviceType;
 	private String remark;
 	private boolean isAccepted;
-	private int orderNo;
+	private boolean isDirected;
+	private String orderNo;
 
 	public Declare() {
+	}
+
+	public Declare(JSONObject jsonObject) throws JSONException {
+		this.id = jsonObject.getInt("id");
+		this.customerId = jsonObject.getString("customerID");
+		this.customerName = jsonObject.getString("customerName");
+		this.servantId = jsonObject.getString("servantID");
+		this.servantName = jsonObject.getString("servantName");
+		this.phoneNo = jsonObject.getString("phoneNo");
+		this.declareTime = jsonObject.getString("declareTime");
+		this.serviceTime = jsonObject.getString("serviceTime");
+		this.serviceProvince = jsonObject.getString("serviceProvince");
+		this.serviceCity = jsonObject.getString("serviceCity");
+		this.serviceCounty = jsonObject.getString("serviceAddress");
+		this.serviceLongitude = jsonObject.getString("serviceLongitude");
+		this.serviceLatitude = jsonObject.getString("serviceLatitude");
+		this.salary = jsonObject.getDouble("salary");
+		this.serviceType = jsonObject.getString("serviceType");
+		this.remark = jsonObject.getString("remarks");
+		this.isAccepted = jsonObject.getBoolean("isAccepted");
+		this.isDirected = jsonObject.getBoolean("isDirected");
+		this.orderNo = jsonObject.getString("orderNo");
 	}
 
 	public String getCustomerId() {
@@ -71,11 +97,19 @@ public class Declare {
 		this.isAccepted = isAccepted;
 	}
 
-	public int getOrderNo() {
+	public boolean isDirected() {
+		return isDirected;
+	}
+
+	public void setIsDirected(boolean isDirected) {
+		this.isDirected = isDirected;
+	}
+
+	public String getOrderNo() {
 		return orderNo;
 	}
 
-	public void setOrderNo(int orderNo) {
+	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
 	}
 
@@ -95,11 +129,11 @@ public class Declare {
 		this.remark = remark;
 	}
 
-	public int getSalary() {
+	public double getSalary() {
 		return salary;
 	}
 
-	public void setSalary(int salary) {
+	public void setSalary(double salary) {
 		this.salary = salary;
 	}
 

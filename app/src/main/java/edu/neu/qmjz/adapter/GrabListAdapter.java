@@ -64,7 +64,17 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 	@Override
 	public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-//		holder.mClassTextView.setText(String.valueOf(position + 1));
+		if(holder instanceof GrabListViewHolder){
+			Declare temp = mDeclareList.get(position);
+			((GrabListViewHolder) holder).mServiceTypeTextView.setText(temp.getServiceType());
+			((GrabListViewHolder)holder).mAccountTextView.setText(temp.getCustomerName());
+			((GrabListViewHolder)holder).mTimeTextView.setText(temp.getServiceTime());
+			String salary =temp.getSalary() + "元";
+			((GrabListViewHolder)holder).mMoneyTextView.setText(salary);
+			((GrabListViewHolder) holder).mContactTextView.setText(temp.getPhoneNo());
+			((GrabListViewHolder)holder).mAddressTextView.setText(temp.getServiceAddress());
+			((GrabListViewHolder)holder).mRemarkTextView.setText(temp.getRemark());
+		}
 	}
 
 	@Override
@@ -72,24 +82,32 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 		return mDeclareList.size();
 	}
 
-	public void refreshList(String serviceType){
-		try {
-			NetworkServiceManager serviceManager =
-					new NetworkServiceManager("http://219.216.65.182:8080/NationalService" +
-							"/MobileServiceDeclareAction?operation=_queryserviceDeclare");
-			Log.v("ServiceType","Raw: ' "+serviceType+" '");
-			Log.v("ServiceType","Encoded: ' "+URLEncoder.encode(serviceType,"UTF-8")+" '");
-			serviceManager.addParameter("serviceType", serviceType);
-			serviceManager.setConnectionListener(mRefreshListener);
-			serviceManager.sendAction();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+	public void refreshList(String countyName,String serviceType){
+
+		NetworkServiceManager serviceManager =
+				new NetworkServiceManager("http://219.216.65.182:8080/NationalService" +
+						"/MobileServiceDeclareAction?operation=_queryserviceDeclare");
+		serviceManager.addParameter("serviceType", serviceType);
+		serviceManager.addParameter("serviceCounty", countyName);
+		serviceManager.setConnectionListener(mRefreshListener);
+		serviceManager.sendAction();
 	}
 
 	static class GrabListViewHolder extends RecyclerView.ViewHolder {
 		@Bind(R.id.service_type_text_view)
-		TextView mClassTextView;
+		TextView mServiceTypeTextView;
+		@Bind(R.id.account_text_view)
+		TextView mAccountTextView;
+		@Bind(R.id.time_text_view)
+		TextView mTimeTextView;
+		@Bind(R.id.money_text_view)
+		TextView mMoneyTextView;
+		@Bind(R.id.contact_text_view)
+		TextView mContactTextView;
+		@Bind(R.id.address_text_view)
+		TextView mAddressTextView;
+		@Bind(R.id.remark_text_view)
+		TextView mRemarkTextView;
 		@Bind(R.id.grab_button)
 		Button mGrabButton;
 		@Bind(R.id.contact_layout)
@@ -103,20 +121,20 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 				@Override
 				public void onClick(View view) {
 //					Toast.makeText(view.getContext(), "onClick--> position = " + getLayoutPosition(), Toast.LENGTH_SHORT).show();
-					Log.v("Network Connection", "On Click");
-					NetworkServiceManager serviceManager =
-							new NetworkServiceManager("http://219.216.65.182:8080/NationalService" +
-									"/MobileServiceDeclareAction?operation=_queryserviceDeclare");
-					serviceManager.addParameter("servantID", "jacob");
-					serviceManager.addParameter("loginPassword","abc123");
-					serviceManager.setConnectionListener(new NetworkServiceManager.ConnectionListener() {
-						@Override
-						public void onConnectionSucceeded(JSONObject result) {
-							Log.v("Network Connection", "Succeed");
-							Log.v("Network Connection", result.toString());
-						}
-					});
-					serviceManager.sendAction();
+//					Log.v("Network Connection", "On Click");
+//					NetworkServiceManager serviceManager =
+//							new NetworkServiceManager("http://219.216.65.182:8080/NationalService" +
+//									"/MobileServiceDeclareAction?operation=_queryserviceDeclare");
+//					serviceManager.addParameter("servantID", "jacob");
+//					serviceManager.addParameter("loginPassword","abc123");
+//					serviceManager.setConnectionListener(new NetworkServiceManager.ConnectionListener() {
+//						@Override
+//						public void onConnectionSucceeded(JSONObject result) {
+//							Log.v("Network Connection", "Succeed");
+//							Log.v("Network Connection", result.toString());
+//						}
+//					});
+//					serviceManager.sendAction();
 				}
 			});
 			mContactLayout.setOnClickListener(new View.OnClickListener() {
@@ -131,24 +149,16 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 	private NetworkServiceManager.ConnectionListener mRefreshListener = new NetworkServiceManager.ConnectionListener() {
 		@Override
 		public void onConnectionSucceeded(JSONObject result) {
+			Log.v("JSON",result.toString());
 			try {
 				if(result.getString("serverResponse").equals("Success")){
-					Log.v("JSON",result.toString());
-//					mServiceTypeList.clear();
-//					JSONArray data = result.getJSONArray("data");
-//					for(int i=0; i<data.length(); i++){
-//						JSONObject temp = (JSONObject)data.get(i);
-//
-//						mServiceTypeList.add(temp.getString("typeName"));
-//					}
-//					if(mIsServiceInitialized){
-//						mDisplayList = DISPLAY_SERVICE_TYPE;
-//					}else {
-//						mOnInitializedListener.onServiceInitialized(mServiceTypeList.get(0));
-//						mIsServiceInitialized = true;
-//					}
-//
-//					notifyDataSetChanged();
+					mDeclareList.clear();
+					JSONArray data = result.getJSONArray("data");
+					for(int i=0;i<data.length();i++){
+						mDeclareList.add(new Declare(data.getJSONObject(i)));
+					}
+
+					notifyDataSetChanged();
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();

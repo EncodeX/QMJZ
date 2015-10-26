@@ -77,8 +77,21 @@ public class FilterPickerAdapter extends BaseAdapter {
 
 	@Override
 	public Object getItem(int i) {
-		String serviceType = mServiceTypeNode.equals("")? mServiceTypeList.get(i):mServiceTypeList.get(i-1);
-		return mDisplayList == DISPLAY_COUNTY ? mCountyList.get(i):serviceType;
+		if(mDisplayList != DISPLAY_COUNTY){
+			String serviceType;
+			if(mServiceTypeNode.equals("")){
+				serviceType = mServiceTypeList.get(i);
+			}else {
+				if(i!=0){
+					serviceType = mServiceTypeList.get(i-1);
+				}else{
+					serviceType = null;
+				}
+			}
+			return serviceType;
+		}else{
+			return mCountyList.get(i);
+		}
 	}
 
 	@Override
@@ -189,8 +202,13 @@ public class FilterPickerAdapter extends BaseAdapter {
 					if(mIsServiceInitialized){
 						mDisplayList = DISPLAY_SERVICE_TYPE;
 					}else {
-						mOnInitializedListener.onServiceInitialized(mServiceTypeList.get(0));
-						mIsServiceInitialized = true;
+						if(mServiceTypeNode.equals("")){
+							showServiceTypeList(mServiceTypeList.get(0));
+							mServiceTypeNode = mServiceTypeList.get(0);
+						}else {
+							mOnInitializedListener.onServiceInitialized(mServiceTypeList.get(0));
+							mIsServiceInitialized = true;
+						}
 					}
 
 					notifyDataSetChanged();
