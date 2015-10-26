@@ -18,7 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.Bind;
 import edu.neu.qmjz.R;
 import edu.neu.qmjz.utils.NetUtils;
 
@@ -54,7 +54,7 @@ public class AccountFragment extends Fragment{
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_account, container, false);
 		queryFromService();
-		ButterKnife.inject(this, rootView);
+		ButterKnife.bind(this, rootView);
 	//	text_city.setText("");
 		return rootView;
 	}

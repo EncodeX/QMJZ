@@ -7,7 +7,7 @@
 	    android:id="@+id/grab_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="56dp"
+	    android:layout_marginBottom="56dp"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"/>
     <View
@@ -23,7 +23,8 @@
         android:layout_height="224dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="-168dp"
-        android:background="@android:color/white">
+        android:background="@android:color/white"
+        android:elevation="3dp">
         <RelativeLayout
             android:id="@+id/spinner_layout"
             android:layout_width="match_parent"
@@ -77,6 +78,9 @@
             android:layout_width="match_parent"
             android:layout_height="168dp"
             android:layout_below="@id/spinner_layout"
+            android:choiceMode="singleChoice"
+            android:stretchMode="columnWidth"
+            android:fadeScrollbars="false"
             android:numColumns="3"/>
     </edu.neu.qmjz.view.FilterPickerLayout>
 </RelativeLayout>

@@ -1,5 +1,6 @@
 package edu.neu.qmjz.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,11 +10,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ImageView;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.Bind;
 import edu.neu.qmjz.R;
+import edu.neu.qmjz.adapter.FilterPickerAdapter;
 import edu.neu.qmjz.adapter.GrabListAdapter;
+import edu.neu.qmjz.view.FilterPickerLayout;
 
 /**
  * Created with Android Studio.
@@ -23,16 +30,34 @@ import edu.neu.qmjz.adapter.GrabListAdapter;
  * Package: edu.neu.qmjz.fragment
  */
 public class GrabFragment extends Fragment {
-	@InjectView(R.id.grab_list)
+	@Bind(R.id.grab_list)
 	RecyclerView mGrabList;
+	@Bind(R.id.filter_layout)
+	FilterPickerLayout mFilterLayout;
+	@Bind(R.id.county_select_button)
+	Button mCountySelectButton;
+	@Bind(R.id.county_select_arrow)
+	ImageView mCountySelectArrow;
+	@Bind(R.id.service_type_select_button)
+	Button mServiceTypeSelectButton;
+	@Bind(R.id.service_type_select_arrow)
+	ImageView mServiceTypeSelectArrow;
+	@Bind(R.id.grab_list_mask)
+	View mGrabListMask;
+	@Bind(R.id.filter_picker)
+	GridView mFilterPicker;
 
-	GrabListAdapter mListAdapter;
+	private GrabListAdapter mListAdapter;
+	private FilterPickerAdapter mPickerAdapter;
+
+	private int mFilterLayoutState = FilterPickerLayout.STATE_CLOSE;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Log.d("Fragment Lifecycle","On Create");
 		super.onCreate(savedInstanceState);
 		mListAdapter = new GrabListAdapter(getContext());
+		mPickerAdapter = new FilterPickerAdapter(getContext());
 	}
 
 	@Nullable
@@ -40,18 +65,19 @@ public class GrabFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.d("Fragment Lifecycle", "On Create View");
 		ViewGroup rootView = (ViewGroup)inflater.inflate(R.layout.fragment_grab, container, false);
-		ButterKnife.inject(this, rootView);
+		ButterKnife.bind(this, rootView);
 
-		mGrabList.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
-		mGrabList.setAdapter(mListAdapter);
+		initView(inflater.getContext());
 
 		return rootView;
 	}
 
 	@Override
 	public void onResume() {
-		Log.d("Fragment Lifecycle","On Resume");
+		Log.d("Fragment Lifecycle", "On Resume");
 		super.onResume();
+
+		mPickerAdapter.initialize();
 	}
 
 	@Override
@@ -70,5 +96,98 @@ public class GrabFragment extends Fragment {
 	public void onDestroy() {
 		Log.d("Fragment Lifecycle","On Destroy");
 		super.onDestroy();
+	}
+
+	private void initView(Context context){
+		mGrabList.setLayoutManager(new LinearLayoutManager(context));
+		mGrabList.setAdapter(mListAdapter);
+
+		mFilterPicker.setAdapter(mPickerAdapter);
+
+		mFilterLayout.setMask(mGrabListMask);
+
+		mCountySelectButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if (mFilterLayoutState == FilterPickerLayout.STATE_PICKING_SERVICE_TYPE) {
+					mFilterLayoutState = FilterPickerLayout.STATE_PICKING_COUNTY;
+					mServiceTypeSelectArrow.setImageResource(R.drawable.ic_arrow_drop_up);
+					mCountySelectArrow.setImageResource(R.drawable.ic_arrow_drop_down);
+					mPickerAdapter.showCountyList();
+				} else if (mFilterLayoutState == FilterPickerLayout.STATE_CLOSE) {
+					mFilterLayoutState = FilterPickerLayout.STATE_PICKING_COUNTY;
+					mCountySelectArrow.setImageResource(R.drawable.ic_arrow_drop_down);
+					mFilterLayout.slide();
+					mPickerAdapter.showCountyList();
+				} else {
+					mFilterLayoutState = FilterPickerLayout.STATE_CLOSE;
+					mCountySelectArrow.setImageResource(R.drawable.ic_arrow_drop_up);
+					mFilterLayout.slide();
+				}
+			}
+		});
+
+		mServiceTypeSelectButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if (mFilterLayoutState == FilterPickerLayout.STATE_PICKING_COUNTY) {
+					mFilterLayoutState = FilterPickerLayout.STATE_PICKING_SERVICE_TYPE;
+					mServiceTypeSelectArrow.setImageResource(R.drawable.ic_arrow_drop_down);
+					mCountySelectArrow.setImageResource(R.drawable.ic_arrow_drop_up);
+					mPickerAdapter.showServiceTypeList();
+				} else if (mFilterLayoutState == FilterPickerLayout.STATE_CLOSE) {
+					mFilterLayoutState = FilterPickerLayout.STATE_PICKING_SERVICE_TYPE;
+					mFilterLayout.slide();
+					mServiceTypeSelectArrow.setImageResource(R.drawable.ic_arrow_drop_down);
+					mPickerAdapter.showServiceTypeList();
+				}  else {
+					mFilterLayoutState = FilterPickerLayout.STATE_CLOSE;
+					mFilterLayout.slide();
+					mServiceTypeSelectArrow.setImageResource(R.drawable.ic_arrow_drop_up);
+				}
+			}
+		});
+
+		mGrabListMask.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				mFilterLayout.slide();
+				mServiceTypeSelectArrow.setImageResource(R.drawable.ic_arrow_drop_up);
+				mCountySelectArrow.setImageResource(R.drawable.ic_arrow_drop_up);
+				mFilterLayoutState = FilterPickerLayout.STATE_CLOSE;
+			}
+		});
+
+		mFilterPicker.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+				if (mPickerAdapter.getDisplayType() == FilterPickerAdapter.DISPLAY_COUNTY) {
+					mCountySelectButton.setText((String) mPickerAdapter.getItem(i));
+				} else {
+					mServiceTypeSelectButton.setText((String) mPickerAdapter.getItem(i));
+				}
+				mServiceTypeSelectArrow.setImageResource(R.drawable.ic_arrow_drop_up);
+				mCountySelectArrow.setImageResource(R.drawable.ic_arrow_drop_up);
+				mFilterLayoutState = FilterPickerLayout.STATE_CLOSE;
+				mFilterLayout.slide();
+			}
+		});
+
+		mPickerAdapter.setOnInitializedListener(new FilterPickerAdapter.OnInitializedListener() {
+			@Override
+			public void onCountyInitialized(String firstCounty) {
+				mCountySelectButton.setText(firstCounty);
+			}
+
+			@Override
+			public void onServiceInitialized(String firstServiceType) {
+				mServiceTypeSelectButton.setText(firstServiceType);
+			}
+
+			@Override
+			public void onAllInitialized() {
+				// todo 刷新抢单列表
+			}
+		});
 	}
 }

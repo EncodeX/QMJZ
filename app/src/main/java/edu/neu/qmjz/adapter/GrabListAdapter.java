@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.Bind;
 import edu.neu.qmjz.R;
-import edu.neu.qmjz.bean.Order;
+import edu.neu.qmjz.bean.Declare;
 import edu.neu.qmjz.utils.NetworkServiceManager;
 
 /**
@@ -35,12 +35,12 @@ public class GrabListAdapter extends RecyclerView.Adapter<GrabListAdapter.GrabLi
 	private final LayoutInflater mLayoutInflater;
 	private final Context mContext;
 
-	private List<Order> orderList;
+	private List<Declare> declareList;
 
 	public GrabListAdapter(Context context) {
 		mContext = context;
 		mLayoutInflater = LayoutInflater.from(context);
-		orderList = new ArrayList<>();
+		declareList = new ArrayList<>();
 	}
 
 	@Override
@@ -55,20 +55,20 @@ public class GrabListAdapter extends RecyclerView.Adapter<GrabListAdapter.GrabLi
 
 	@Override
 	public int getItemCount() {
-		return orderList.size();
+		return 4;
 	}
 
 	public static class GrabListViewHolder extends RecyclerView.ViewHolder {
-		@InjectView(R.id.class_text_view)
+		@Bind(R.id.service_type_text_view)
 		TextView mClassTextView;
-		@InjectView(R.id.grab_button)
+		@Bind(R.id.grab_button)
 		Button mGrabButton;
-		@InjectView(R.id.contact_layout)
+		@Bind(R.id.contact_layout)
 		RelativeLayout mContactLayout;
 
 		public GrabListViewHolder(View itemView) {
 			super(itemView);
-			ButterKnife.inject(this, itemView);
+			ButterKnife.bind(this, itemView);
 
 			mGrabButton.setOnClickListener(new View.OnClickListener() {
 				@Override

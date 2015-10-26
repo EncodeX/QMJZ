@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.Bind;
 import edu.neu.qmjz.R;
 import edu.neu.qmjz.adapter.MainPagerAdapter;
 
@@ -28,12 +28,12 @@ public class MainActivity extends AppCompatActivity {
 			R.string.account_fragment_title
 	};
 
-	@InjectView(R.id.app_bar)
+	@Bind(R.id.app_bar)
 	Toolbar mToolBar;
 	ActionBar mAppBar;
-	@InjectView(R.id.app_bar_tab)
+	@Bind(R.id.app_bar_tab)
 	TabLayout mAppBarTab;
-	@InjectView(R.id.view_pager)
+	@Bind(R.id.view_pager)
 	ViewPager mViewPager;
 
 	private MainPagerAdapter mMainPagerAdapter;
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void initView(){
-		ButterKnife.inject(this);
+		ButterKnife.bind(this);
 
 		setSupportActionBar(mToolBar);
 		mAppBar = getSupportActionBar();
