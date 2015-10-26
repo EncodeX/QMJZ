@@ -40,6 +40,7 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 	private final Context mContext;
 
 	private List<Declare> mDeclareList;
+	private OnRefreshCompleteListener mOnRefreshCompleteListener;
 
 	public GrabListAdapter(Context context) {
 		mContext = context;
@@ -80,6 +81,10 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 	@Override
 	public int getItemCount() {
 		return mDeclareList.size();
+	}
+
+	public void setOnRefreshCompleteListener(OnRefreshCompleteListener onRefreshCompleteListener) {
+		this.mOnRefreshCompleteListener = onRefreshCompleteListener;
 	}
 
 	public void refreshList(String countyName,String serviceType){
@@ -157,12 +162,21 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 					for(int i=0;i<data.length();i++){
 						mDeclareList.add(new Declare(data.getJSONObject(i)));
 					}
-
 					notifyDataSetChanged();
 				}
+				mOnRefreshCompleteListener.onRefreshComplete();
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
+
+		@Override
+		public void onConnectionFailed(String errorMessage) {
+			mOnRefreshCompleteListener.onRefreshComplete();
+		}
 	};
+
+	public interface OnRefreshCompleteListener{
+		void onRefreshComplete();
+	}
 }

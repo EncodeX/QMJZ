@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -46,6 +47,8 @@ public class GrabFragment extends Fragment {
 	View mGrabListMask;
 	@Bind(R.id.filter_picker)
 	GridView mFilterPicker;
+	@Bind(R.id.grab_list_refresher)
+	SwipeRefreshLayout mGrabListRefresher;
 
 	private GrabListAdapter mListAdapter;
 	private FilterPickerAdapter mPickerAdapter;
@@ -96,7 +99,7 @@ public class GrabFragment extends Fragment {
 
 	@Override
 	public void onDestroy() {
-		Log.d("Fragment Lifecycle","On Destroy");
+		Log.d("Fragment Lifecycle", "On Destroy");
 		super.onDestroy();
 	}
 
@@ -179,7 +182,7 @@ public class GrabFragment extends Fragment {
 							return;
 						} else {
 							mServiceTypeSelectButton.setText((String) mPickerAdapter.getItem(i));
-							mPickerAdapter.setSelectedServiceTypeIndex(i-1);
+							mPickerAdapter.setSelectedServiceTypeIndex(i - 1);
 							refreshDeclareList();
 						}
 					}
@@ -192,9 +195,28 @@ public class GrabFragment extends Fragment {
 		});
 
 		mPickerAdapter.setOnInitializedListener(mInitializeListener);
+
+		mGrabListRefresher.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+			@Override
+			public void onRefresh() {
+				refreshDeclareList();
+			}
+		});
+		mGrabListRefresher.setColorSchemeResources(R.color.colorPrimary,R.color.colorBlue,R.color.colorAccent);
+		mListAdapter.setOnRefreshCompleteListener(new GrabListAdapter.OnRefreshCompleteListener() {
+			@Override
+			public void onRefreshComplete() {
+				try {
+					mGrabListRefresher.setRefreshing(false);
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	private void refreshDeclareList(){
+		if(!mGrabListRefresher.isRefreshing()) mGrabListRefresher.setRefreshing(true);
 		mListAdapter.refreshList(mCountySelectButton.getText().toString(),mServiceTypeSelectButton.getText().toString());
 	}
 

@@ -208,6 +208,11 @@ public class FilterPickerAdapter extends BaseAdapter {
 				e.printStackTrace();
 			}
 		}
+
+		@Override
+		public void onConnectionFailed(String errorMessage) {
+
+		}
 	};
 
 	private NetworkServiceManager.ConnectionListener mServiceRefreshListener = new NetworkServiceManager.ConnectionListener() {
@@ -240,6 +245,11 @@ public class FilterPickerAdapter extends BaseAdapter {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+		}
+
+		@Override
+		public void onConnectionFailed(String errorMessage) {
+
 		}
 	};
 

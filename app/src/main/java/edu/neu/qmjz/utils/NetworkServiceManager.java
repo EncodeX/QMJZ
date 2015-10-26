@@ -51,6 +51,7 @@ public class NetworkServiceManager {
 
 	public interface ConnectionListener{
 		void onConnectionSucceeded(JSONObject result);
+		void onConnectionFailed(String errorMessage);
 	}
 
 	private class NetworkConnection extends AsyncTask<String, Integer, JSONObject>{
@@ -104,10 +105,12 @@ public class NetworkServiceManager {
 					return new JSONObject(response);
 				}else{
 					Log.v("Network Connection","Response: "+ responseCode);
+					mConnectionListener.onConnectionFailed("Connection Error. Response: " + responseCode);
 					return null;
 				}
 			} catch (IOException | JSONException e) {
 				Log.v("Network Connection","Exception caught");
+				mConnectionListener.onConnectionFailed("Exception happened. See log for more information.");
 				e.printStackTrace();
 			}
 			return null;
@@ -115,7 +118,10 @@ public class NetworkServiceManager {
 
 		@Override
 		protected void onPostExecute(JSONObject jsonObject) {
-			if(jsonObject == null) return;
+			if(jsonObject == null){
+				mConnectionListener.onConnectionFailed("JSONObject is null");
+				return;
+			}
 			if(mConnectionListener != null) mConnectionListener.onConnectionSucceeded(jsonObject);
 		}
 	}

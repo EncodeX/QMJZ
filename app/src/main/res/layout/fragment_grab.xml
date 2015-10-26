@@ -3,13 +3,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 xmlns:app="http://schemas.android.com/apk/res-auto">
-    <android.support.v7.widget.RecyclerView
-	    android:id="@+id/grab_list"
+    <android.support.v4.widget.SwipeRefreshLayout
+	    android:id="@+id/grab_list_refresher"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="56dp"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"/>
+        android:layout_marginBottom="56dp">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/grab_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="56dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
     <View
 	    android:id="@+id/grab_list_mask"
         android:layout_width="match_parent"
