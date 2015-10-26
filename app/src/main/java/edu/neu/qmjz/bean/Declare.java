@@ -46,14 +46,15 @@ public class Declare {
 		this.serviceTime = jsonObject.getString("serviceTime");
 		this.serviceProvince = jsonObject.getString("serviceProvince");
 		this.serviceCity = jsonObject.getString("serviceCity");
-		this.serviceCounty = jsonObject.getString("serviceAddress");
+		this.serviceCounty = jsonObject.getString("serviceCounty");
+		this.serviceAddress = jsonObject.getString("serviceAddress");
 		this.serviceLongitude = jsonObject.getString("serviceLongitude");
 		this.serviceLatitude = jsonObject.getString("serviceLatitude");
 		this.salary = jsonObject.getDouble("salary");
 		this.serviceType = jsonObject.getString("serviceType");
 		this.remark = jsonObject.getString("remarks");
-		this.isAccepted = jsonObject.getBoolean("isAccepted");
-		this.isDirected = jsonObject.getBoolean("isDirected");
+		this.isAccepted = jsonObject.getInt("isAccepted") == 1;
+		this.isDirected = jsonObject.getInt("isDirected") == 1;
 		this.orderNo = jsonObject.getString("orderNo");
 	}
 

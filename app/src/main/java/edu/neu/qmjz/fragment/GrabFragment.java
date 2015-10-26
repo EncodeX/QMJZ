@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import butterknife.ButterKnife;
 import butterknife.Bind;
@@ -202,15 +203,29 @@ public class GrabFragment extends Fragment {
 				refreshDeclareList();
 			}
 		});
-		mGrabListRefresher.setColorSchemeResources(R.color.colorPrimary,R.color.colorBlue,R.color.colorAccent);
+		mGrabListRefresher.setColorSchemeResources(R.color.colorPrimary, R.color.colorBlue, R.color.colorAccent);
 		mListAdapter.setOnRefreshCompleteListener(new GrabListAdapter.OnRefreshCompleteListener() {
 			@Override
 			public void onRefreshComplete() {
 				try {
 					mGrabListRefresher.setRefreshing(false);
-				}catch (Exception e){
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			}
+		});
+
+		mListAdapter.setGrabResultListener(new GrabListAdapter.GrabResultListener() {
+			@Override
+			public void onGrabSucceeded() {
+				refreshDeclareList();
+				Toast.makeText(getContext(),"抢单成功",Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onGrabFailed() {
+				refreshDeclareList();
+				Toast.makeText(getContext(),"抢单失败",Toast.LENGTH_SHORT).show();
 			}
 		});
 	}

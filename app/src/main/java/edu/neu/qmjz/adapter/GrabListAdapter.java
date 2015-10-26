@@ -2,7 +2,6 @@ package edu.neu.qmjz.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +14,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import edu.neu.qmjz.R;
 import edu.neu.qmjz.bean.Declare;
 import edu.neu.qmjz.utils.NetworkServiceManager;
@@ -41,6 +38,7 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 	private List<Declare> mDeclareList;
 	private OnRefreshCompleteListener mOnRefreshCompleteListener;
+	private GrabResultListener mGrabResultListener;
 
 	public GrabListAdapter(Context context) {
 		mContext = context;
@@ -64,17 +62,24 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 	}
 
 	@Override
-	public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+	public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 		if(holder instanceof GrabListViewHolder){
 			Declare temp = mDeclareList.get(position);
+			String salary =temp.getSalary() + "元";
+			String address= temp.getServiceProvince()+ temp.getServiceCity() + temp.getServiceCounty() + temp.getServiceAddress();
 			((GrabListViewHolder) holder).mServiceTypeTextView.setText(temp.getServiceType());
 			((GrabListViewHolder)holder).mAccountTextView.setText(temp.getCustomerName());
 			((GrabListViewHolder)holder).mTimeTextView.setText(temp.getServiceTime());
-			String salary =temp.getSalary() + "元";
 			((GrabListViewHolder)holder).mMoneyTextView.setText(salary);
 			((GrabListViewHolder) holder).mContactTextView.setText(temp.getPhoneNo());
-			((GrabListViewHolder)holder).mAddressTextView.setText(temp.getServiceAddress());
+			((GrabListViewHolder) holder).mAddressTextView.setText(address);
 			((GrabListViewHolder)holder).mRemarkTextView.setText(temp.getRemark());
+			((GrabListViewHolder)holder).mGrabButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					grabDeclare(position);
+				}
+			});
 		}
 	}
 
@@ -87,14 +92,37 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 		this.mOnRefreshCompleteListener = onRefreshCompleteListener;
 	}
 
-	public void refreshList(String countyName,String serviceType){
+	public void setGrabResultListener(GrabResultListener grabResultListener) {
+		this.mGrabResultListener = grabResultListener;
+	}
 
+	public void refreshList(String countyName,String serviceType){
 		NetworkServiceManager serviceManager =
 				new NetworkServiceManager("http://219.216.65.182:8080/NationalService" +
 						"/MobileServiceDeclareAction?operation=_queryserviceDeclare");
 		serviceManager.addParameter("serviceType", serviceType);
 		serviceManager.addParameter("serviceCounty", countyName);
 		serviceManager.setConnectionListener(mRefreshListener);
+		serviceManager.sendAction();
+	}
+
+	public void grabDeclare(int index){
+		NetworkServiceManager serviceManager =
+				new NetworkServiceManager("http://219.216.65.182:8080/NationalService" +
+						"/MobileServiceOrderAction?operation=_add");
+		Declare temp = mDeclareList.get(index);
+		serviceManager.addParameter("id", String.valueOf(temp.getId()));
+		serviceManager.addParameter("customerID", temp.getCustomerId());
+		serviceManager.addParameter("customerName", temp.getCustomerName());
+		serviceManager.addParameter("servantID", temp.getServantId());
+		serviceManager.addParameter("servantName", temp.getServantName());
+		serviceManager.addParameter("contactAddress", temp.getServiceAddress());
+		serviceManager.addParameter("contactPhone", temp.getPhoneNo());
+		serviceManager.addParameter("servicePrice", String.valueOf(temp.getSalary()));
+		serviceManager.addParameter("serviceType", temp.getServiceType());
+		serviceManager.addParameter("serviceContent", "");
+		serviceManager.addParameter("remarks", temp.getRemark());
+		serviceManager.setConnectionListener(mGrabDeclareListener);
 		serviceManager.sendAction();
 	}
 
@@ -121,27 +149,6 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 		public GrabListViewHolder(View itemView) {
 			super(itemView);
 			ButterKnife.bind(this, itemView);
-
-			mGrabButton.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-//					Toast.makeText(view.getContext(), "onClick--> position = " + getLayoutPosition(), Toast.LENGTH_SHORT).show();
-//					Log.v("Network Connection", "On Click");
-//					NetworkServiceManager serviceManager =
-//							new NetworkServiceManager("http://219.216.65.182:8080/NationalService" +
-//									"/MobileServiceDeclareAction?operation=_queryserviceDeclare");
-//					serviceManager.addParameter("servantID", "jacob");
-//					serviceManager.addParameter("loginPassword","abc123");
-//					serviceManager.setConnectionListener(new NetworkServiceManager.ConnectionListener() {
-//						@Override
-//						public void onConnectionSucceeded(JSONObject result) {
-//							Log.v("Network Connection", "Succeed");
-//							Log.v("Network Connection", result.toString());
-//						}
-//					});
-//					serviceManager.sendAction();
-				}
-			});
 			mContactLayout.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
@@ -154,10 +161,9 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 	private NetworkServiceManager.ConnectionListener mRefreshListener = new NetworkServiceManager.ConnectionListener() {
 		@Override
 		public void onConnectionSucceeded(JSONObject result) {
-			Log.v("JSON",result.toString());
 			try {
+				mDeclareList.clear();
 				if(result.getString("serverResponse").equals("Success")){
-					mDeclareList.clear();
 					JSONArray data = result.getJSONArray("data");
 					for(int i=0;i<data.length();i++){
 						mDeclareList.add(new Declare(data.getJSONObject(i)));
@@ -176,7 +182,33 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 		}
 	};
 
+	private NetworkServiceManager.ConnectionListener mGrabDeclareListener = new NetworkServiceManager.ConnectionListener() {
+		@Override
+		public void onConnectionSucceeded(JSONObject result) {
+			try {
+				if(result.getString("serverResponse").equals("Success")){
+					mGrabResultListener.onGrabSucceeded();
+				}else{
+					mGrabResultListener.onGrabFailed();
+				}
+			} catch (JSONException e) {
+				mGrabResultListener.onGrabFailed();
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void onConnectionFailed(String errorMessage) {
+			mGrabResultListener.onGrabFailed();
+		}
+	};
+
 	public interface OnRefreshCompleteListener{
 		void onRefreshComplete();
+	}
+
+	public interface GrabResultListener {
+		void onGrabSucceeded();
+		void onGrabFailed();
 	}
 }
