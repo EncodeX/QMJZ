@@ -49,6 +49,7 @@ public class GrabFragment extends Fragment {
 
 	private GrabListAdapter mListAdapter;
 	private FilterPickerAdapter mPickerAdapter;
+	private PickInitializeListener mInitializeListener;
 
 	private int mFilterLayoutState = FilterPickerLayout.STATE_CLOSE;
 
@@ -58,6 +59,7 @@ public class GrabFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 		mListAdapter = new GrabListAdapter(getContext());
 		mPickerAdapter = new FilterPickerAdapter(getContext());
+		mInitializeListener = new PickInitializeListener();
 	}
 
 	@Nullable
@@ -82,7 +84,7 @@ public class GrabFragment extends Fragment {
 
 	@Override
 	public void onPause() {
-		Log.d("Fragment Lifecycle","On Pause");
+		Log.d("Fragment Lifecycle", "On Pause");
 		super.onPause();
 	}
 
@@ -134,12 +136,12 @@ public class GrabFragment extends Fragment {
 					mFilterLayoutState = FilterPickerLayout.STATE_PICKING_SERVICE_TYPE;
 					mServiceTypeSelectArrow.setImageResource(R.drawable.ic_arrow_drop_down);
 					mCountySelectArrow.setImageResource(R.drawable.ic_arrow_drop_up);
-					mPickerAdapter.showServiceTypeList();
+					mPickerAdapter.showServiceTypeList(mPickerAdapter.getServiceTypeNode());
 				} else if (mFilterLayoutState == FilterPickerLayout.STATE_CLOSE) {
 					mFilterLayoutState = FilterPickerLayout.STATE_PICKING_SERVICE_TYPE;
 					mFilterLayout.slide();
 					mServiceTypeSelectArrow.setImageResource(R.drawable.ic_arrow_drop_down);
-					mPickerAdapter.showServiceTypeList();
+					mPickerAdapter.showServiceTypeList(mPickerAdapter.getServiceTypeNode());
 				}  else {
 					mFilterLayoutState = FilterPickerLayout.STATE_CLOSE;
 					mFilterLayout.slide();
@@ -163,8 +165,22 @@ public class GrabFragment extends Fragment {
 			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 				if (mPickerAdapter.getDisplayType() == FilterPickerAdapter.DISPLAY_COUNTY) {
 					mCountySelectButton.setText((String) mPickerAdapter.getItem(i));
+//					refreshDeclareList();
 				} else {
-					mServiceTypeSelectButton.setText((String) mPickerAdapter.getItem(i));
+					if (mPickerAdapter.getServiceTypeNode().equals("")) {
+						mPickerAdapter.setServiceTypeNode((String) mPickerAdapter.getItem(i));
+						mPickerAdapter.showServiceTypeList(mPickerAdapter.getServiceTypeNode());
+						return;
+					} else {
+						if (i == 0) {
+							mPickerAdapter.setServiceTypeNode("");
+							mPickerAdapter.showServiceTypeList(mPickerAdapter.getServiceTypeNode());
+							return;
+						} else {
+							mServiceTypeSelectButton.setText((String) mPickerAdapter.getItem(i));
+							refreshDeclareList();
+						}
+					}
 				}
 				mServiceTypeSelectArrow.setImageResource(R.drawable.ic_arrow_drop_up);
 				mCountySelectArrow.setImageResource(R.drawable.ic_arrow_drop_up);
@@ -173,21 +189,33 @@ public class GrabFragment extends Fragment {
 			}
 		});
 
-		mPickerAdapter.setOnInitializedListener(new FilterPickerAdapter.OnInitializedListener() {
-			@Override
-			public void onCountyInitialized(String firstCounty) {
-				mCountySelectButton.setText(firstCounty);
-			}
+		mPickerAdapter.setOnInitializedListener(mInitializeListener);
+	}
 
-			@Override
-			public void onServiceInitialized(String firstServiceType) {
-				mServiceTypeSelectButton.setText(firstServiceType);
-			}
+	private void refreshDeclareList(){
+		mListAdapter.refreshList(mServiceTypeSelectButton.getText().toString());
+	}
 
-			@Override
-			public void onAllInitialized() {
-				// todo 刷新抢单列表
+	private class PickInitializeListener implements FilterPickerAdapter.OnInitializedListener{
+		private Integer initCounter = 0;
+
+		@Override
+		public void onCountyInitialized(String firstCounty) {
+			mCountySelectButton.setText(firstCounty);
+			countAndCheck();
+		}
+
+		@Override
+		public void onServiceInitialized(String firstServiceType) {
+			mServiceTypeSelectButton.setText(firstServiceType);
+			countAndCheck();
+		}
+
+		private synchronized void countAndCheck(){
+			initCounter++;
+			if(initCounter == 2){
+				refreshDeclareList();
 			}
-		});
+		}
 	}
 }

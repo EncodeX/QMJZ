@@ -11,8 +11,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,36 +33,61 @@ import edu.neu.qmjz.utils.NetworkServiceManager;
  * Project: QMJZ
  * Package: edu.neu.qmjz.adapter
  */
-public class GrabListAdapter extends RecyclerView.Adapter<GrabListAdapter.GrabListViewHolder>{
+public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 	// 用户名 jacob  密码 abc123
 
 	private final LayoutInflater mLayoutInflater;
 	private final Context mContext;
 
-	private List<Declare> declareList;
+	private List<Declare> mDeclareList;
 
 	public GrabListAdapter(Context context) {
 		mContext = context;
 		mLayoutInflater = LayoutInflater.from(context);
-		declareList = new ArrayList<>();
+		mDeclareList = new ArrayList<>();
 	}
 
 	@Override
-	public GrabListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		return new GrabListViewHolder(mLayoutInflater.inflate(R.layout.grab_list_item, parent, false));
 	}
 
 	@Override
-	public void onBindViewHolder(GrabListViewHolder holder, int position) {
+	public int getItemViewType(int position) {
+		return super.getItemViewType(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return super.getItemId(position);
+	}
+
+	@Override
+	public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 //		holder.mClassTextView.setText(String.valueOf(position + 1));
 	}
 
 	@Override
 	public int getItemCount() {
-		return 4;
+		return mDeclareList.size();
 	}
 
-	public static class GrabListViewHolder extends RecyclerView.ViewHolder {
+	public void refreshList(String serviceType){
+		try {
+			NetworkServiceManager serviceManager =
+					new NetworkServiceManager("http://219.216.65.182:8080/NationalService" +
+							"/MobileServiceDeclareAction?operation=_queryserviceDeclare");
+			Log.v("ServiceType","Raw: ' "+serviceType+" '");
+			Log.v("ServiceType","Encoded: ' "+URLEncoder.encode(serviceType,"UTF-8")+" '");
+			serviceManager.addParameter("serviceType", serviceType);
+			serviceManager.setConnectionListener(mRefreshListener);
+			serviceManager.sendAction();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	}
+
+	static class GrabListViewHolder extends RecyclerView.ViewHolder {
 		@Bind(R.id.service_type_text_view)
 		TextView mClassTextView;
 		@Bind(R.id.grab_button)
@@ -77,7 +106,7 @@ public class GrabListAdapter extends RecyclerView.Adapter<GrabListAdapter.GrabLi
 					Log.v("Network Connection", "On Click");
 					NetworkServiceManager serviceManager =
 							new NetworkServiceManager("http://219.216.65.182:8080/NationalService" +
-									"/MobileServantInfoAction?operation=_login");
+									"/MobileServiceDeclareAction?operation=_queryserviceDeclare");
 					serviceManager.addParameter("servantID", "jacob");
 					serviceManager.addParameter("loginPassword","abc123");
 					serviceManager.setConnectionListener(new NetworkServiceManager.ConnectionListener() {
@@ -98,4 +127,32 @@ public class GrabListAdapter extends RecyclerView.Adapter<GrabListAdapter.GrabLi
 			});
 		}
 	}
+
+	private NetworkServiceManager.ConnectionListener mRefreshListener = new NetworkServiceManager.ConnectionListener() {
+		@Override
+		public void onConnectionSucceeded(JSONObject result) {
+			try {
+				if(result.getString("serverResponse").equals("Success")){
+					Log.v("JSON",result.toString());
+//					mServiceTypeList.clear();
+//					JSONArray data = result.getJSONArray("data");
+//					for(int i=0; i<data.length(); i++){
+//						JSONObject temp = (JSONObject)data.get(i);
+//
+//						mServiceTypeList.add(temp.getString("typeName"));
+//					}
+//					if(mIsServiceInitialized){
+//						mDisplayList = DISPLAY_SERVICE_TYPE;
+//					}else {
+//						mOnInitializedListener.onServiceInitialized(mServiceTypeList.get(0));
+//						mIsServiceInitialized = true;
+//					}
+//
+//					notifyDataSetChanged();
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+	};
 }

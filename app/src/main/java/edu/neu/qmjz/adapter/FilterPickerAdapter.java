@@ -35,6 +35,7 @@ public class FilterPickerAdapter extends BaseAdapter {
 	private int mDisplayList;
 	private List<String> mCountyList;
 	private List<String> mServiceTypeList;
+	private String mServiceTypeNode;
 	private Context mContext;
 
 	private boolean mIsCountyInitialized = false;
@@ -47,6 +48,7 @@ public class FilterPickerAdapter extends BaseAdapter {
 		mContext = context;
 		mCountyList = new ArrayList<>();
 		mServiceTypeList = new ArrayList<>();
+		mServiceTypeNode = "";
 	}
 
 	public void showCountyList(){
@@ -58,28 +60,38 @@ public class FilterPickerAdapter extends BaseAdapter {
 		serviceManager.sendAction();
 	}
 
-	public void showServiceTypeList(){
+	public void showServiceTypeList(String serviceType){
 		NetworkServiceManager serviceManager =
 				new NetworkServiceManager("http://219.216.65.182:8080/NationalService" +
 						"/MobileServiceTypeAction?operation=_query");
-		serviceManager.addParameter("typeName","家政");
+		serviceManager.addParameter("typeName", serviceType);
 		serviceManager.setConnectionListener(mServiceRefreshListener);
 		serviceManager.sendAction();
 	}
 
 	@Override
 	public int getCount() {
-		return mDisplayList == DISPLAY_COUNTY ? mCountyList.size():mServiceTypeList.size();
+		int serviceTypeCount = mServiceTypeNode.equals("")? mServiceTypeList.size():(mServiceTypeList.size()+1);
+		return mDisplayList == DISPLAY_COUNTY ? mCountyList.size():serviceTypeCount;
 	}
 
 	@Override
 	public Object getItem(int i) {
-		return mDisplayList == DISPLAY_COUNTY ? mCountyList.get(i):mServiceTypeList.get(i);
+		String serviceType = mServiceTypeNode.equals("")? mServiceTypeList.get(i):mServiceTypeList.get(i-1);
+		return mDisplayList == DISPLAY_COUNTY ? mCountyList.get(i):serviceType;
 	}
 
 	@Override
 	public long getItemId(int i) {
 		return i;
+	}
+
+	public String getServiceTypeNode() {
+		return mServiceTypeNode;
+	}
+
+	public void setServiceTypeNode(String serviceTypeNode) {
+		this.mServiceTypeNode = serviceTypeNode;
 	}
 
 	@Override
@@ -88,7 +100,15 @@ public class FilterPickerAdapter extends BaseAdapter {
 		if(mDisplayList == DISPLAY_COUNTY){
 			content = mCountyList.get(i);
 		}else{
-			content = mServiceTypeList.get(i);
+			if(mServiceTypeNode.equals("")){
+				content = mServiceTypeList.get(i);
+			}else {
+				if(i==0){
+					content = "上一级";
+				}else {
+					content = mServiceTypeList.get(i-1);
+				}
+			}
 		}
 
 		ViewHolderItem viewHolderItem;
@@ -116,7 +136,7 @@ public class FilterPickerAdapter extends BaseAdapter {
 
 	public void initialize(){
 		showCountyList();
-		showServiceTypeList();
+		showServiceTypeList("");
 	}
 
 	static class ViewHolderItem{
@@ -143,6 +163,7 @@ public class FilterPickerAdapter extends BaseAdapter {
 						mDisplayList = DISPLAY_COUNTY;
 					}else{
 						mOnInitializedListener.onCountyInitialized(mCountyList.get(0));
+						mIsCountyInitialized = true;
 					}
 					notifyDataSetChanged();
 				}
@@ -157,6 +178,7 @@ public class FilterPickerAdapter extends BaseAdapter {
 		public void onConnectionSucceeded(JSONObject result) {
 			try {
 				if(result.getString("serverResponse").equals("Success")){
+
 					mServiceTypeList.clear();
 					JSONArray data = result.getJSONArray("data");
 					for(int i=0; i<data.length(); i++){
@@ -168,6 +190,7 @@ public class FilterPickerAdapter extends BaseAdapter {
 						mDisplayList = DISPLAY_SERVICE_TYPE;
 					}else {
 						mOnInitializedListener.onServiceInitialized(mServiceTypeList.get(0));
+						mIsServiceInitialized = true;
 					}
 
 					notifyDataSetChanged();
@@ -186,6 +209,5 @@ public class FilterPickerAdapter extends BaseAdapter {
 	public interface OnInitializedListener{
 		void onCountyInitialized(String firstCounty);
 		void onServiceInitialized(String firstServiceType);
-		void onAllInitialized();
 	}
 }
