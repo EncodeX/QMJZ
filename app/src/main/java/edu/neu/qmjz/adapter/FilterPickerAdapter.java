@@ -1,7 +1,6 @@
 package edu.neu.qmjz.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +39,8 @@ public class FilterPickerAdapter extends BaseAdapter {
 
 	private boolean mIsCountyInitialized = false;
 	private boolean mIsServiceInitialized = false;
+	private int mSelectedCountyIndex;
+	private int mSelectedServiceTypeIndex;
 
 	private OnInitializedListener mOnInitializedListener;
 
@@ -143,13 +144,36 @@ public class FilterPickerAdapter extends BaseAdapter {
 		return mDisplayList;
 	}
 
+	public int getSelectedCountyIndex() {
+		return mSelectedCountyIndex;
+	}
+
+	public void setSelectedCountyIndex(int intex) {
+		this.mSelectedCountyIndex = intex;
+	}
+
+	public int getSelectedServiceTypeIndex() {
+		return mSelectedServiceTypeIndex;
+	}
+
+	public void setSelectedServiceTypeIndex(int index) {
+		this.mSelectedServiceTypeIndex = index;
+	}
+
 	public void setOnInitializedListener(OnInitializedListener onInitializedListener) {
 		this.mOnInitializedListener = onInitializedListener;
 	}
 
 	public void initialize(){
-		showCountyList();
-		showServiceTypeList("");
+		if(mIsCountyInitialized && mIsServiceInitialized){
+			mOnInitializedListener.onCountyInitialized(mCountyList.get(mSelectedCountyIndex));
+			mOnInitializedListener.onServiceInitialized(mServiceTypeList.get(mSelectedServiceTypeIndex));
+		}else {
+			showCountyList();
+			showServiceTypeList("");
+			mSelectedCountyIndex = 0;
+			mSelectedServiceTypeIndex = 0;
+		}
 	}
 
 	static class ViewHolderItem{

@@ -90,7 +90,7 @@ public class GrabFragment extends Fragment {
 
 	@Override
 	public void onStop() {
-		Log.d("Fragment Lifecycle","On Stop");
+		Log.d("Fragment Lifecycle", "On Stop");
 		super.onStop();
 	}
 
@@ -165,6 +165,7 @@ public class GrabFragment extends Fragment {
 			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 				if (mPickerAdapter.getDisplayType() == FilterPickerAdapter.DISPLAY_COUNTY) {
 					mCountySelectButton.setText((String) mPickerAdapter.getItem(i));
+					mPickerAdapter.setSelectedCountyIndex(i);
 					refreshDeclareList();
 				} else {
 					if (mPickerAdapter.getServiceTypeNode().equals("")) {
@@ -178,6 +179,7 @@ public class GrabFragment extends Fragment {
 							return;
 						} else {
 							mServiceTypeSelectButton.setText((String) mPickerAdapter.getItem(i));
+							mPickerAdapter.setSelectedServiceTypeIndex(i-1);
 							refreshDeclareList();
 						}
 					}
@@ -200,19 +202,20 @@ public class GrabFragment extends Fragment {
 		private Integer initCounter = 0;
 
 		@Override
-		public void onCountyInitialized(String firstCounty) {
-			mCountySelectButton.setText(firstCounty);
+		public void onCountyInitialized(String selectedCounty) {
+			mCountySelectButton.setText(selectedCounty);
 			countAndCheck();
 		}
 
 		@Override
-		public void onServiceInitialized(String firstServiceType) {
-			mServiceTypeSelectButton.setText(firstServiceType);
+		public void onServiceInitialized(String selectedServiceType) {
+			mServiceTypeSelectButton.setText(selectedServiceType);
 			countAndCheck();
 		}
 
 		private synchronized void countAndCheck(){
-			initCounter++;
+			if(initCounter < 2) initCounter++; else return;
+
 			if(initCounter == 2){
 				refreshDeclareList();
 			}
