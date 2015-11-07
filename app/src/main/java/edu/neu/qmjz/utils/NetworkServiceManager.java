@@ -8,12 +8,16 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.UUID;
 
 /**
  * Created with Android Studio.
@@ -46,6 +50,7 @@ public class NetworkServiceManager {
 
 	public void sendAction(){
 		String query = mJSONBuilder.toString();
+		Log.d("URLString:",mUrl);
 		new NetworkConnection(mUrl,query).execute();
 	}
 
@@ -82,14 +87,12 @@ public class NetworkServiceManager {
 				Log.v("Network Connection", "Posting...");
 				// send post action
 				mConnection.connect();
-
 				OutputStream outputStream = mConnection.getOutputStream();
 				BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
 				bufferedWriter.write(mQuery);
 				bufferedWriter.flush();
 				bufferedWriter.close();
 				outputStream.close();
-
 				// receive response
 				int responseCode = mConnection.getResponseCode();
 				if(responseCode == HttpURLConnection.HTTP_OK){
@@ -102,6 +105,7 @@ public class NetworkServiceManager {
 					}
 
 					String response = stringBuilder.toString();
+				//	Log.e("dataInfo","' "+response+" '");
 					return new JSONObject(response);
 				}else{
 					Log.v("Network Connection","Response: "+ responseCode);
@@ -109,8 +113,7 @@ public class NetworkServiceManager {
 					return null;
 				}
 			} catch (IOException | JSONException e) {
-				Log.v("Network Connection","Exception caught");
-				mConnectionListener.onConnectionFailed("Exception happened. See log for more information.");
+				Log.v("Network Connection", "Exception caught");
 				e.printStackTrace();
 			}
 			return null;
@@ -120,6 +123,7 @@ public class NetworkServiceManager {
 		protected void onPostExecute(JSONObject jsonObject) {
 			if(jsonObject == null){
 				mConnectionListener.onConnectionFailed("JSONObject is null");
+//				mConnectionListener.onConnectionFailed("Exception happened. See log for more information.");
 				return;
 			}
 			if(mConnectionListener != null) mConnectionListener.onConnectionSucceeded(jsonObject);

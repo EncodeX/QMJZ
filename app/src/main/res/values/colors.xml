@@ -9,4 +9,5 @@
 	<color name="rippleBlack">#1A000000</color>
 	<color name="rippleWhite">#66FFFFFF</color>
     <color name="pureWhite">#FFFFFF</color>
+    <color name="balck">#000000</color>
 </resources>

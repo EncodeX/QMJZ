@@ -31,7 +31,7 @@ import edu.neu.qmjz.utils.NetworkServiceManager;
  * Package: edu.neu.qmjz.adapter
  */
 public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
-	// 用户名 jacob  密码 abc123
+	// 用户名 jacob  密码 123abc
 
 	private final LayoutInflater mLayoutInflater;
 	private final Context mContext;

@@ -2,14 +2,16 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/pureWhite">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="300dp"
         android:layout_height="200dp"
         android:gravity="center"
         android:layout_alignBottom="@+id/linearLayout"
-        android:layout_centerHorizontal="true" >
+        android:layout_centerHorizontal="true"
+        >
 
 
         <EditText
@@ -18,7 +20,8 @@
             android:layout_height="wrap_content"
             style="@style/Widget.AppCompat.EditText"
             android:hint="请输入账户"
-            android:inputType="text" />
+            android:inputType="text"
+            />
 
         <EditText
             android:id="@+id/passwdText"
@@ -38,7 +41,7 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/linearLayout">
         <Button
-            android:id="@+id/bnLogin"
+            android:id="@+id/btnLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/AppTheme.Button.Blue"
@@ -48,8 +51,8 @@
             android:id="@+id/bnRegis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="Widget.AppCompat.Button.Borderless"
-            android:text="没有注册" />
+            style="@style/AppTheme.Button.grey"
+            android:text="尚未注册" />
     </LinearLayout>
 
 

@@ -18,9 +18,9 @@ import com.nineoldandroids.animation.ObjectAnimator;
  * Package: edu.neu.qmjz.view
  */
 public class FilterPickerLayout extends RelativeLayout {
-	public final static int STATE_CLOSE = 0;
-	public final static int STATE_PICKING_COUNTY = 1;
-	public final static int STATE_PICKING_SERVICE_TYPE = 2;
+	public final static int STATE_CLOSE = 0;//close
+	public final static int STATE_PICKING_COUNTY = 1;//picker_county
+	public final static int STATE_PICKING_SERVICE_TYPE = 2;//service_type
 
 	private View mMask;
 

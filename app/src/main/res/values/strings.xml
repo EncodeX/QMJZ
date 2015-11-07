@@ -14,4 +14,5 @@
 	<string name="grab_card_address">详细地址</string>
 	<string name="grab_card_remark">备注</string>
 	<string name="grab_card_button">抢单</string>
+	<string name="base_url">http://219.216.65.182:8080/NationalService/</string>
 </resources>
