@@ -3,6 +3,7 @@ package edu.neu.qmjz.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 
 import edu.neu.qmjz.fragment.FragmentException;
@@ -15,7 +16,7 @@ import edu.neu.qmjz.fragment.MainFragmentManager;
  * Project: QMJZ
  * Package: edu.neu.qmjz.adapter
  */
-public class MainPagerAdapter extends FragmentPagerAdapter {
+public class MainPagerAdapter extends FragmentStatePagerAdapter {
 	public MainPagerAdapter(FragmentManager fm) {
 		super(fm);
 	}

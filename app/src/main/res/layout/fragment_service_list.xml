@@ -1,10 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Service List"/>
+                android:layout_height="match_parent"
+                xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--<android.support.v4.widget.SwipeRefreshLayout-->
+        <!--android:id="@+id/service_list_refresher"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginBottom="56dp">-->
+        <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:id="@+id/service_list"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_marginBottom="56dp"-->
+            <!--android:paddingLeft="4dp"-->
+            <!--android:paddingRight="4dp"/>-->
+    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
+	<android.support.v7.widget.RecyclerView
+		android:id="@+id/service_list"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_marginBottom="56dp"
+		android:paddingLeft="4dp"
+		android:paddingRight="4dp"/>
+
+	<android.support.design.widget.TabLayout
+		android:id="@+id/service_list_type_tab"
+		android:layout_height="?actionBarSize"
+		android:layout_width="match_parent"
+		android:layout_alignParentBottom="true"
+		android:background="@android:color/white"
+		app:tabIndicatorColor="@color/colorPrimaryDark"
+		app:tabIndicatorHeight="0dp"
+		app:tabMode="fixed"
+		app:tabSelectedTextColor="@color/colorPrimaryDark"
+		app:tabTextColor="@android:color/primary_text_light"/>
 </RelativeLayout>
