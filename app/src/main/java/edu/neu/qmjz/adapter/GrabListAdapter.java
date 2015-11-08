@@ -170,7 +170,7 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 					}
 					notifyDataSetChanged();
 				}
-				mOnRefreshCompleteListener.onRefreshComplete();
+				if(mOnRefreshCompleteListener != null) mOnRefreshCompleteListener.onRefreshComplete();
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -178,7 +178,7 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 		@Override
 		public void onConnectionFailed(String errorMessage) {
-			mOnRefreshCompleteListener.onRefreshComplete();
+			if(mOnRefreshCompleteListener != null) mOnRefreshCompleteListener.onRefreshComplete();
 		}
 	};
 
@@ -187,12 +187,12 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 		public void onConnectionSucceeded(JSONObject result) {
 			try {
 				if(result.getString("serverResponse").equals("Success")){
-					mGrabResultListener.onGrabSucceeded();
+					if(mGrabResultListener != null) mGrabResultListener.onGrabSucceeded();
 				}else{
-					mGrabResultListener.onGrabFailed();
+					if(mGrabResultListener != null) mGrabResultListener.onGrabFailed();
 				}
 			} catch (JSONException e) {
-				mGrabResultListener.onGrabFailed();
+				if(mGrabResultListener != null) mGrabResultListener.onGrabFailed();
 				e.printStackTrace();
 			}
 		}

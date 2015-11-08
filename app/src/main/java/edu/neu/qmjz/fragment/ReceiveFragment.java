@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -50,6 +51,12 @@ public class ReceiveFragment extends Fragment {
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		mListAdapter.refreshList("jacob");
+	}
+
+	@Override
 	public void onPause() {
 		super.onPause();
 	}
@@ -62,5 +69,38 @@ public class ReceiveFragment extends Fragment {
 	private void initView(Context context){
 		mReceiveList.setLayoutManager(new LinearLayoutManager(context));
 		mReceiveList.setAdapter(mListAdapter);
+
+		mListAdapter.setOnRefreshCompleteListener(new ReceiveListAdapter.OnRefreshCompleteListener() {
+			@Override
+			public void onRefreshComplete() {
+
+			}
+		});
+
+		mListAdapter.setActionResultListener(new ReceiveListAdapter.ActionResultListener() {
+			@Override
+			public void onGrabSucceeded() {
+				mListAdapter.refreshList("jacob");
+				Toast.makeText(getContext(), "抢单成功", Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onGrabFailed() {
+				mListAdapter.refreshList("jacob");
+				Toast.makeText(getContext(),"抢单失败",Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onRefuseSucceeded() {
+				mListAdapter.refreshList("jacob");
+				Toast.makeText(getContext(),"已拒绝订单",Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onRefuseFailed() {
+				mListAdapter.refreshList("jacob");
+				Toast.makeText(getContext(),"网络通信错误",Toast.LENGTH_SHORT).show();
+			}
+		});
 	}
 }

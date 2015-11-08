@@ -61,6 +61,15 @@ public class ServiceListFragment extends Fragment {
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		final TabLayout.Tab selectedTab = mServiceListTypeTab.getTabAt(mListSelectedIndex);
+		if(selectedTab!=null && selectedTab.getText()!=null){
+			mListAdapter.refreshList("jacob", selectedTab.getText().toString());
+		}
+	}
+
+	@Override
 	public void onPause() {
 		super.onPause();
 	}
@@ -90,6 +99,8 @@ public class ServiceListFragment extends Fragment {
 			@Override
 			public void onTabSelected(TabLayout.Tab tab) {
 				mListSelectedIndex = tab.getPosition();
+				if(tab.getText()!=null)
+					mListAdapter.refreshList("jacob", tab.getText().toString());
 			}
 
 			@Override

@@ -2,6 +2,7 @@ package edu.neu.qmjz.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,7 @@ public class ReceiveListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 	private List<Declare> mDeclareList;
 	private OnRefreshCompleteListener mOnRefreshCompleteListener;
-	private GrabResultListener mGrabResultListener;
+	private ActionResultListener mActionResultListener;
 
 	public ReceiveListAdapter(Context context) {
 		mContext = context;
@@ -63,45 +64,51 @@ public class ReceiveListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 	@Override
 	public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-//		if(holder instanceof ReceiveListViewHolder){
-//			Declare temp = mDeclareList.get(position);
-//			String salary =temp.getSalary() + "元";
-//			String address= temp.getServiceProvince()+ temp.getServiceCity() + temp.getServiceCounty() + temp.getServiceAddress();
-//			((ReceiveListViewHolder) holder).mServiceTypeTextView.setText(temp.getServiceType());
-//			((ReceiveListViewHolder)holder).mAccountTextView.setText(temp.getCustomerName());
-//			((ReceiveListViewHolder)holder).mTimeTextView.setText(temp.getServiceTime());
-//			((ReceiveListViewHolder)holder).mMoneyTextView.setText(salary);
-//			((ReceiveListViewHolder) holder).mContactTextView.setText(temp.getPhoneNo());
-//			((ReceiveListViewHolder) holder).mAddressTextView.setText(address);
-//			((ReceiveListViewHolder)holder).mRemarkTextView.setText(temp.getRemark());
-//			((ReceiveListViewHolder)holder).mGrabButton.setOnClickListener(new View.OnClickListener() {
-//				@Override
-//				public void onClick(View view) {
-//					grabDeclare(position);
-//				}
-//			});
-//		}
+		if(holder instanceof ReceiveListViewHolder){
+			Declare temp = mDeclareList.get(position);
+			String salary =temp.getSalary() + "元";
+			String address= temp.getServiceProvince()+ temp.getServiceCity() + temp.getServiceCounty() + temp.getServiceAddress();
+			((ReceiveListViewHolder) holder).mServiceTypeTextView.setText(temp.getServiceType());
+			((ReceiveListViewHolder)holder).mAccountTextView.setText(temp.getCustomerName());
+			((ReceiveListViewHolder)holder).mTimeTextView.setText(temp.getServiceTime());
+			((ReceiveListViewHolder)holder).mMoneyTextView.setText(salary);
+			((ReceiveListViewHolder) holder).mContactTextView.setText(temp.getPhoneNo());
+			((ReceiveListViewHolder) holder).mAddressTextView.setText(address);
+			((ReceiveListViewHolder)holder).mRemarkTextView.setText(temp.getRemark());
+			((ReceiveListViewHolder)holder).mGrabButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					grabDeclare(position);
+				}
+			});
+			((ReceiveListViewHolder)holder).mRefuseButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					refuseDeclare(position);
+				}
+			});
+		}
 	}
 
 	@Override
 	public int getItemCount() {
-//		return mDeclareList.size();
-		return 10;
+		return mDeclareList.size();
+//		return 10;
 	}
 
 	public void setOnRefreshCompleteListener(OnRefreshCompleteListener onRefreshCompleteListener) {
 		this.mOnRefreshCompleteListener = onRefreshCompleteListener;
 	}
 
-	public void setGrabResultListener(GrabResultListener grabResultListener) {
-		this.mGrabResultListener = grabResultListener;
+	public void setActionResultListener(ActionResultListener actionResultListener) {
+		this.mActionResultListener = actionResultListener;
 	}
 
-	public void refreshList(String serviceType){
+	public void refreshList(String id){
 		NetworkServiceManager serviceManager =
 				new NetworkServiceManager("http://219.216.65.182:8080/NationalService" +
 						"/MobileServiceDeclareAction?operation=_queyOwnservice");
-		serviceManager.addParameter("serviceType", serviceType);
+		serviceManager.addParameter("servantID", id);
 		serviceManager.setConnectionListener(mRefreshListener);
 		serviceManager.sendAction();
 	}
@@ -123,6 +130,16 @@ public class ReceiveListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		serviceManager.addParameter("serviceContent", "");
 		serviceManager.addParameter("remarks", temp.getRemark());
 		serviceManager.setConnectionListener(mGrabDeclareListener);
+		serviceManager.sendAction();
+	}
+
+	public void refuseDeclare(int index){
+		NetworkServiceManager serviceManager =
+				new NetworkServiceManager("http://219.216.65.182:8080/NationalService" +
+						"/MobileServiceOrderAction?operation=_add");
+		Declare temp = mDeclareList.get(index);
+		serviceManager.addParameter("id", String.valueOf(temp.getId()));
+		serviceManager.setConnectionListener(mRefuseDeclareListener);
 		serviceManager.sendAction();
 	}
 
@@ -164,6 +181,7 @@ public class ReceiveListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		@Override
 		public void onConnectionSucceeded(JSONObject result) {
 			try {
+				Log.v("test",result.toString());
 				mDeclareList.clear();
 				if(result.getString("serverResponse").equals("Success")){
 					JSONArray data = result.getJSONArray("data");
@@ -172,7 +190,7 @@ public class ReceiveListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 					}
 					notifyDataSetChanged();
 				}
-				mOnRefreshCompleteListener.onRefreshComplete();
+				if(mOnRefreshCompleteListener!=null) mOnRefreshCompleteListener.onRefreshComplete();
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -180,7 +198,7 @@ public class ReceiveListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 		@Override
 		public void onConnectionFailed(String errorMessage) {
-			mOnRefreshCompleteListener.onRefreshComplete();
+			if(mOnRefreshCompleteListener!=null) mOnRefreshCompleteListener.onRefreshComplete();
 		}
 	};
 
@@ -189,19 +207,40 @@ public class ReceiveListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		public void onConnectionSucceeded(JSONObject result) {
 			try {
 				if(result.getString("serverResponse").equals("Success")){
-					mGrabResultListener.onGrabSucceeded();
+					if(mActionResultListener!=null) mActionResultListener.onGrabSucceeded();
 				}else{
-					mGrabResultListener.onGrabFailed();
+					if(mActionResultListener!=null) mActionResultListener.onGrabFailed();
 				}
 			} catch (JSONException e) {
-				mGrabResultListener.onGrabFailed();
+				if(mActionResultListener!=null) mActionResultListener.onGrabFailed();
 				e.printStackTrace();
 			}
 		}
 
 		@Override
 		public void onConnectionFailed(String errorMessage) {
-			mGrabResultListener.onGrabFailed();
+			mActionResultListener.onGrabFailed();
+		}
+	};
+
+	private NetworkServiceManager.ConnectionListener mRefuseDeclareListener = new NetworkServiceManager.ConnectionListener() {
+		@Override
+		public void onConnectionSucceeded(JSONObject result) {
+			try {
+				if(result.getString("serverResponse").equals("Success")){
+					if(mActionResultListener!=null) mActionResultListener.onRefuseSucceeded();
+				}else{
+					if(mActionResultListener!=null) mActionResultListener.onRefuseFailed();
+				}
+			} catch (JSONException e) {
+				if(mActionResultListener!=null) mActionResultListener.onRefuseFailed();
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void onConnectionFailed(String errorMessage) {
+			mActionResultListener.onGrabFailed();
 		}
 	};
 
@@ -209,8 +248,10 @@ public class ReceiveListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		void onRefreshComplete();
 	}
 
-	public interface GrabResultListener {
+	public interface ActionResultListener {
 		void onGrabSucceeded();
 		void onGrabFailed();
+		void onRefuseSucceeded();
+		void onRefuseFailed();
 	}
 }

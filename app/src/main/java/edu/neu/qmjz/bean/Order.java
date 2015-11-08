@@ -36,33 +36,28 @@ public class Order {
 	public Order() {
 	}
 
-	public Order(String settleDate, String commentTime, String confirmTime, String contactAddress,
-	             String contactPhone, String customerId, String customerName, int id,
-	             boolean isSettled, String orderNo, String orderStatus, String orderTime,
-	             double paidAmount, String payTime, String payType, String remark,
-	             String servantId, String servantName, String serviceContent,
-	             double servicePrice, String serviceType) {
-		this.settleDate = settleDate;
-		this.commentTime = commentTime;
-		this.confirmTime = confirmTime;
-		this.contactAddress = contactAddress;
-		this.contactPhone = contactPhone;
-		this.customerId = customerId;
-		this.customerName = customerName;
-		this.id = id;
-		this.isSettled = isSettled;
-		this.orderNo = orderNo;
-		this.orderStatus = orderStatus;
-		this.orderTime = orderTime;
-		this.paidAmount = paidAmount;
-		this.payTime = payTime;
-		this.payType = payType;
-		this.remark = remark;
-		this.servantId = servantId;
-		this.servantName = servantName;
-		this.serviceContent = serviceContent;
-		this.servicePrice = servicePrice;
-		this.serviceType = serviceType;
+	public Order(JSONObject order) throws JSONException {
+		this.settleDate = order.getString("settleDate");
+		this.commentTime = order.getString("commentTime");
+		this.confirmTime = order.getString("confirmTime");
+		this.contactAddress = order.getString("contactAddress");
+		this.contactPhone = order.getString("contactPhone");
+		this.customerId = order.getString("customerID");
+		this.customerName = order.getString("customerName");
+		this.id = order.getInt("id");
+		this.isSettled = order.getInt("isSettled") != 0;
+		this.orderNo = order.getString("orderNo");
+		this.orderStatus = order.getString("orderStatus");
+		this.orderTime = order.getString("orderTime");
+		this.paidAmount = order.getDouble("paidAmount");
+		this.payTime = order.getString("payTime");
+		this.payType = order.getString("payType");
+		this.remark = order.getString("remarks");
+		this.servantId = order.getString("servantID");
+		this.servantName = order.getString("servantName");
+		this.serviceContent = order.getString("serviceContent");
+		this.servicePrice = order.getDouble("servicePrice");
+		this.serviceType = order.getString("serviceType");
 	}
 
 	public String getCommentTime() {
