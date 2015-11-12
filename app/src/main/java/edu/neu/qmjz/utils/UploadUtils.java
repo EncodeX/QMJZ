@@ -55,7 +55,7 @@ public class UploadUtils {
         this.context=context;
     }
 
-    public  String uploadFile(String RequestURL) throws JSONException {
+    public  String uploadFile(File file, String RequestURL) throws JSONException {
         String CONTENT_TYPE = "multipart/form-data"; // 内容类型
 
         try {
@@ -72,7 +72,7 @@ public class UploadUtils {
             conn.setRequestProperty("Content-Type", CONTENT_TYPE + ";boundary="
                     + BOUNDARY);
 
-
+            if (file != null) {
                 Log.e("UploadUtils","File Not Null!");
                 DataOutputStream dos = new DataOutputStream(
                         conn.getOutputStream());
@@ -82,7 +82,7 @@ public class UploadUtils {
                 sb.append(LINE_END);
 
                 sb.append("Content-Disposition: form-data; name=\"upload\"; filename=\""
-                        + "hello" + "\"" + LINE_END);
+                        + file.getName() + "\"" + LINE_END);
                 sb.append("Content-Type: application/octet-stream; charset="
                         + CHARSET + LINE_END);
                 sb.append(LINE_END);
@@ -117,6 +117,9 @@ public class UploadUtils {
                     }
                     return strBuffer.toString();
                 }
+            }else{
+                Log.v("Upload","文件为空");
+            }
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "uploadFile exception:"+e);
@@ -124,7 +127,8 @@ public class UploadUtils {
         return null;
     }
     public void sendPhoto(Context context){
-        new UploadImage().execute();
+        File file = getFileDir(context, "ic_test2");
+        new UploadImage(file.getPath()+".png").execute();
     }
     private File getFileDir(Context context, String dirName) {
         String cachePath;
@@ -142,8 +146,10 @@ public class UploadUtils {
         return new File(cachePath + File.separator + dirName);
     }
     private class UploadImage extends AsyncTask<String,Void,JSONObject> {
+        private String imagePath;
 
-        public UploadImage() {
+        public UploadImage(String imagePath) {
+            this.imagePath = imagePath;
         }
 
         @Override
@@ -151,8 +157,9 @@ public class UploadUtils {
             try {
                 StringBuilder stringBuilder = new StringBuilder("http://219.216.65.182:8080/NationalService" +
                         "/MoblieServantRegisteAction?operation=_update");
+                File file = new File(imagePath);
 
-                String result = uploadFile(stringBuilder.toString());
+                String result = uploadFile(file, stringBuilder.toString());
                 Log.e("sendPhotoResult"," "+result.toString()+" ");
                 return new JSONObject(result);
             } catch (JSONException e) {
