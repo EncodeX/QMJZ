@@ -234,7 +234,7 @@ public class AccountListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewH
                 editor.commit();
                 break;
         }
-        UploadUtils uploadUtils = new UploadUtils();
+        UploadUtils uploadUtils = new UploadUtils(context);
         addParameter(uploadUtils);
         uploadUtils.setConnectionListener(refreshInfoListener);
         uploadUtils.sendPhoto(context);
@@ -244,7 +244,7 @@ public class AccountListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewH
         text[4]=list.get((int)id);
         editor.putString("servantCounty", text[4]);
         editor.commit();
-        UploadUtils uploadUtils = new UploadUtils();
+        UploadUtils uploadUtils = new UploadUtils(context);
         addParameter(uploadUtils);
         uploadUtils.setConnectionListener(refreshInfoListener);
         uploadUtils.sendPhoto(context);

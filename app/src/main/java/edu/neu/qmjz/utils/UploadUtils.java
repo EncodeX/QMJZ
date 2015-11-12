@@ -5,6 +5,7 @@ package edu.neu.qmjz.utils;
  */
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
@@ -29,6 +30,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
+import edu.neu.qmjz.R;
+
 /**
  * Created with Android Studio.
  * Author: Enex Tapper
@@ -42,15 +45,17 @@ public class UploadUtils {
     private static final String CHARSET = "utf-8"; // 设置编码
     private JSONObject mJSONBuilder;
     private ConnectionListener mConnectionListener;
+    private Context context;
 
     private String BOUNDARY = UUID.randomUUID().toString(); // 边界标识 随机生成
     private String PREFIX = "--", LINE_END = "\r\n";
 
-    public UploadUtils(){
+    public UploadUtils(Context context){
         this.mJSONBuilder=new JSONObject();
+        this.context=context;
     }
 
-    public  String uploadFile(File file, String RequestURL) throws JSONException {
+    public  String uploadFile(String RequestURL) throws JSONException {
         String CONTENT_TYPE = "multipart/form-data"; // 内容类型
 
         try {
@@ -67,7 +72,7 @@ public class UploadUtils {
             conn.setRequestProperty("Content-Type", CONTENT_TYPE + ";boundary="
                     + BOUNDARY);
 
-            if (file != null) {
+
                 Log.e("UploadUtils","File Not Null!");
                 DataOutputStream dos = new DataOutputStream(
                         conn.getOutputStream());
@@ -77,13 +82,17 @@ public class UploadUtils {
                 sb.append(LINE_END);
 
                 sb.append("Content-Disposition: form-data; name=\"upload\"; filename=\""
-                        + file.getName() + "\"" + LINE_END);
+                        + "hello" + "\"" + LINE_END);
                 sb.append("Content-Type: application/octet-stream; charset="
                         + CHARSET + LINE_END);
                 sb.append(LINE_END);
                 dos.write(sb.toString().getBytes());
-                     Log.e(TAG, "beginReceive0::"+file.toString());
-                InputStream is = new FileInputStream(file);
+                     Log.e(TAG, "uploadFile before InputStream ");
+                    Log.e(TAG, "uploadFile before2 InputStream ");
+                InputStream is=context.getResources().getAssets().open("ic_test2.png");
+                     Log.e(TAG, "uploadFile after InputStream ");
+               // InputStream is = new FileInputStream(file);
+
                 byte[] bytes = new byte[1024];
                 int len = 0;
                 while ((len = is.read(bytes)) != -1) {
@@ -108,18 +117,14 @@ public class UploadUtils {
                     }
                     return strBuffer.toString();
                 }
-            }else{
-                Log.v("Upload","文件为空");
-            }
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e(TAG, "uploadFile exception");
+            Log.e(TAG, "uploadFile exception:"+e);
         }
         return null;
     }
     public void sendPhoto(Context context){
-        File file = getFileDir(context, "ic_test2");
-        new UploadImage(file.getPath()+".png").execute();
+        new UploadImage().execute();
     }
     private File getFileDir(Context context, String dirName) {
         String cachePath;
@@ -137,10 +142,8 @@ public class UploadUtils {
         return new File(cachePath + File.separator + dirName);
     }
     private class UploadImage extends AsyncTask<String,Void,JSONObject> {
-        private String imagePath;
 
-        public UploadImage(String imagePath) {
-            this.imagePath = imagePath;
+        public UploadImage() {
         }
 
         @Override
@@ -148,9 +151,8 @@ public class UploadUtils {
             try {
                 StringBuilder stringBuilder = new StringBuilder("http://219.216.65.182:8080/NationalService" +
                         "/MoblieServantRegisteAction?operation=_update");
-                File file = new File(imagePath);
 
-                String result = uploadFile(file, stringBuilder.toString());
+                String result = uploadFile(stringBuilder.toString());
                 Log.e("sendPhotoResult"," "+result.toString()+" ");
                 return new JSONObject(result);
             } catch (JSONException e) {
