@@ -7,6 +7,7 @@ import org.json.JSONObject;
  * Created by Administrator on 2015/10/25.
  */
 public class Person {
+    private int id;
     private String servantID;
     private String idCardNo;
     private String servantName;
@@ -66,6 +67,14 @@ public class Person {
         this.serviceItems=jsonObject.getString("serviceItems");
         this.careerType=jsonObject.getString("careerType");
     }
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getServantID() {
         return servantID;
     }

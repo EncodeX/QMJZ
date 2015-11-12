@@ -45,17 +45,19 @@ import edu.neu.qmjz.utils.UploadUtils;
  */
 public class AccountListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private Context context;
-    private List<String> list =new ArrayList<String>();
+    private List<String> list;
     private SharedPreferences personData;
     private SharedPreferences.Editor editor;
     private String[] title;
     private String[] text;
+    private ArrayAdapter<String> adapter;
     public AccountListAdapter(Context context,List countryList) {
         Log.e("AccountListAdapter","AccountListAdapter()");
         this.context = context;
         this.inflater= LayoutInflater.from(context);
         this.list=countryList;
         this.personData=context.getSharedPreferences("shareData",0);
+        adapter = new ArrayAdapter<>(context,android.R.layout.simple_spinner_item, list);
         editor=personData.edit();
         title =new String[]{"用户名","姓名","联系电话","手机号码","所属地区","通讯地址","QQ账号","邮箱"};
         text =new String[]{personData.getString("servantID",""), personData.getString("servantName",""),
@@ -82,6 +84,7 @@ public class AccountListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         Log.e("AccountListAdapter","onBindViewHolder()");
         if (holder instanceof AccountListViewHolder) {
+            Log.e("text","createTextHolder()"+position);
             ((AccountListViewHolder)holder).account_item_title.setText(title[position]);
             ((AccountListViewHolder)holder).account_item_text.setText(text[position]);
             ((AccountListViewHolder)holder).account_item_text.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -99,21 +102,25 @@ public class AccountListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewH
             });
         }
         if (holder instanceof AccountAreaViewHolder){
-            Log.e("spinner","createSpinner");
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,android.R.layout.simple_spinner_item, list);
+            Log.e("spinner","createSpinner()"+position);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             ((AccountAreaViewHolder)holder).spinner_area.setAdapter(adapter);
             int defaultCity=0;
+            Log.e("spinner0", defaultCity+" "+personData.getString("servantCounty","")+" "+"list.size()"+" "+list.size()+" ");
             for (int i=0;i<list.size();i++){
+                Log.e("spinner1", defaultCity+" "+personData.getString("servantCounty",""));
                 if (personData.getString("servantCounty","").equals(list.get(i))){
                     defaultCity=i;
-                    Log.e("spinner", defaultCity+" "+personData.getString("servantCounty",""));
+                    Log.e("spinner2", defaultCity+" "+personData.getString("servantCounty",""));
                 }
             }
-            ((AccountAreaViewHolder)holder).spinner_area.setSelection(defaultCity);
+            ((AccountAreaViewHolder)holder).spinner_area.setSelection(defaultCity,true);
             ((AccountAreaViewHolder)holder).spinner_area.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    Log.e("spinner","Selected");
+                       //     ((AccountAreaViewHolder) holder).spinner_area.selec(position, true);
+                   // parent.getItemAtPosition(position).toString();
                     refreshArea(id);
                     parent.setVisibility(View.VISIBLE);
                 }
@@ -125,6 +132,7 @@ public class AccountListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewH
             });
         }
         if (holder instanceof AccountBtnViewHolder){
+            Log.e("Button","createBtn()"+position);
             ((AccountBtnViewHolder)holder).account_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -226,43 +234,38 @@ public class AccountListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewH
                 editor.commit();
                 break;
         }
-        NetworkServiceManager serviceManager =
-                new NetworkServiceManager("http://219.216.65.182:8080/NationalService" +
-                        "/MoblieServantRegisteAction?operation=_update");
-        addParameter(serviceManager);
-        serviceManager.setConnectionListener(refreshInfoListener);
-        sendPhoto();
-        serviceManager.sendAction();
+        UploadUtils uploadUtils = new UploadUtils();
+        addParameter(uploadUtils);
+        uploadUtils.setConnectionListener(refreshInfoListener);
+        uploadUtils.sendPhoto(context);
     }
     public void refreshArea(long id){
         Log.e("refreshArea","refreshing area.");
         text[4]=list.get((int)id);
         editor.putString("servantCounty", text[4]);
         editor.commit();
-        NetworkServiceManager serviceManager =
-                new NetworkServiceManager("http://219.216.65.182:8080/NationalService" +
-                        "/MoblieServantRegisteAction?operation=_update");
-        addParameter(serviceManager);
-        serviceManager.setConnectionListener(refreshInfoListener);
-        serviceManager.sendAction();
+        UploadUtils uploadUtils = new UploadUtils();
+        addParameter(uploadUtils);
+        uploadUtils.setConnectionListener(refreshInfoListener);
+        uploadUtils.sendPhoto(context);
     }
-    public void addParameter(NetworkServiceManager serviceManager){
-        serviceManager.addParameter("id",personData.getString("servantID",""));
-        serviceManager.addParameter("servantName",personData.getString("servantName",""));
-        serviceManager.addParameter("loginPassword",personData.getString("loginPassword",""));
-        serviceManager.addParameter("phoneNo",personData.getString("phoneNo",""));
-        serviceManager.addParameter("servantMobil",personData.getString("servantMobil",""));
-        serviceManager.addParameter("servantProvince",personData.getString("servantProvince",""));
-        serviceManager.addParameter("servantCity",personData.getString("servantCity",""));
-        serviceManager.addParameter("servantCounty",personData.getString("servantCounty",""));
-        serviceManager.addParameter("contactAddress",personData.getString("contactAddress",""));
-        serviceManager.addParameter("qqNumber",personData.getString("qqNumber",""));
-        serviceManager.addParameter("emailAddress",personData.getString("emailAddress",""));
-        serviceManager.addParameter("headPicture",personData.getString("headPicture",""));
-        serviceManager.addParameter("realLatitude",personData.getString("realLatitude",""));
-        serviceManager.addParameter("realLongitude",personData.getString("realLongitude",""));
+    public void addParameter(UploadUtils uploadUtils){
+        uploadUtils.addParameter("id",personData.getString("id","5"));
+        uploadUtils.addParameter("servantName",personData.getString("servantName",""));
+        uploadUtils.addParameter("loginPassword",personData.getString("loginPassword",""));
+        uploadUtils.addParameter("phoneNo",personData.getString("phoneNo",""));
+        uploadUtils.addParameter("servantMobil",personData.getString("servantMobil",""));
+        uploadUtils.addParameter("servantProvince",personData.getString("servantProvince",""));
+        uploadUtils.addParameter("servantCity",personData.getString("servantCity",""));
+        uploadUtils.addParameter("servantCounty",personData.getString("servantCounty",""));
+        uploadUtils.addParameter("contactAddress",personData.getString("contactAddress",""));
+        uploadUtils.addParameter("qqNumber",personData.getString("qqNumber",""));
+        uploadUtils.addParameter("emailAddress",personData.getString("emailAddress",""));
+        uploadUtils.addParameter("headPicture",personData.getString("headPicture",""));
+        uploadUtils.addParameter("realLatitude","43214321");
+        uploadUtils.addParameter("realLongitude","23413124");
     }
-    private NetworkServiceManager.ConnectionListener refreshInfoListener= new NetworkServiceManager.ConnectionListener() {
+    private UploadUtils.ConnectionListener refreshInfoListener= new UploadUtils.ConnectionListener() {
         @Override
         public void onConnectionSucceeded(JSONObject result) {
             try {
@@ -282,60 +285,7 @@ public class AccountListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewH
 
         }
     };
-    private void sendPhoto(){
-        File file = getFileDir(context, "photos");
-        new UploadImage(file.getPath()+".jpg").execute();
-    }
-    private File getFileDir(Context context, String dirName) {
-        String cachePath;
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-                || !Environment.isExternalStorageRemovable()) {
-            if(context.getExternalCacheDir() != null){
-                cachePath = context.getExternalCacheDir().getPath();
-            }else{
-                cachePath = context.getCacheDir().getPath();
-            }
-        } else {
-            cachePath = context.getCacheDir().getPath();
-        }
-        Log.e("Account::path",cachePath);
-        return new File(cachePath + File.separator + dirName);
-    }
-    private class UploadImage extends AsyncTask<String,Void,JSONObject> {
-        private String imagePath;
 
-        public UploadImage(String imagePath) {
-            this.imagePath = imagePath;
-        }
-
-        @Override
-        protected JSONObject doInBackground(String... strings) {
-            try {
-                StringBuilder stringBuilder = new StringBuilder("http://219.216.65.182:8080/NationalService" +
-                        "/MoblieServantRegisteAction?operation=_update");
-                File file = new File(imagePath);
-
-                String result = UploadUtils.uploadFile(file, stringBuilder.toString());
-
-                return new JSONObject(result);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(JSONObject jsonObject) {
-            try {
-                if(jsonObject!=null){
-                    String imageUrl = jsonObject.getString("upload");
-
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
 
 }

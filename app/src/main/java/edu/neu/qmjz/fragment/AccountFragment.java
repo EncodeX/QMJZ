@@ -53,6 +53,7 @@ public class AccountFragment extends Fragment{
 		Log.e("account", "onCreate");
 		super.onCreate(savedInstanceState);
 		countryList=new ArrayList<>();
+		initData();
 		accountListAdapter=new AccountListAdapter(getContext(),countryList);
 
 	}
@@ -65,7 +66,7 @@ public class AccountFragment extends Fragment{
 		ButterKnife.bind(this, rootView);
 		account_list.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
 		account_list.setAdapter(accountListAdapter);
-		initData();
+
 		return rootView;
 	}
 
@@ -92,6 +93,7 @@ public class AccountFragment extends Fragment{
 		public void onConnectionSucceeded(JSONObject result) {
 			try {
 				if(result.getString("serverResponse").equals("Success")){
+					Log.e("countryName",result.toString());
 					countryList.clear();
 					JSONArray data = result.getJSONArray("data");
 					for(int i=0; i<data.length(); i++){
@@ -99,7 +101,8 @@ public class AccountFragment extends Fragment{
 
 						countryList.add(temp.getString("countyName"));
 					}
-
+					Log.e("countryName",String.valueOf(countryList.size()));
+					accountListAdapter.notifyDataSetChanged();
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();

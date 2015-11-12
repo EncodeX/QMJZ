@@ -68,6 +68,7 @@ public class LoginActivity extends AppCompatActivity{
                 if(result.getString("serverResponse").equals("Success")){
                     JSONObject data = result.getJSONObject("data");
                     person=new Person(data);
+                    editor.putInt("id",person.getId());
                     editor.putString("servantName",person.getServantName());
                     editor.putString("servantID",person.getServantID());
                     editor.putString("careerType",person.getCareerType());
