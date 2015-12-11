@@ -1,6 +1,7 @@
 package edu.neu.qmjz.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -31,6 +33,7 @@ public class ServiceListFragment extends Fragment {
 	private int mListSelectedIndex;
 
 	private ServiceListAdapter mListAdapter;
+	private SharedPreferences mSharedPreferences;
 
 	@Bind(R.id.service_list)
 	RecyclerView mServiceList;
@@ -41,6 +44,8 @@ public class ServiceListFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mListAdapter = new ServiceListAdapter(getContext());
+
+		mSharedPreferences = getContext().getSharedPreferences("shareData", 0);
 	}
 
 	@Nullable
@@ -65,7 +70,7 @@ public class ServiceListFragment extends Fragment {
 		super.onResume();
 		final TabLayout.Tab selectedTab = mServiceListTypeTab.getTabAt(mListSelectedIndex);
 		if(selectedTab!=null && selectedTab.getText()!=null){
-			mListAdapter.refreshList("jacob", selectedTab.getText().toString());
+			mListAdapter.refreshList(mSharedPreferences.getString("servantID",""), selectedTab.getText().toString());
 		}
 	}
 
@@ -90,7 +95,7 @@ public class ServiceListFragment extends Fragment {
 			mServiceListTypeTab.addTab(mServiceListTypeTab.newTab().setText(aTYPE_TITLE));
 		}
 
-		final TabLayout.Tab selectedTab = mServiceListTypeTab.getTabAt(mListSelectedIndex);
+		TabLayout.Tab selectedTab = mServiceListTypeTab.getTabAt(mListSelectedIndex);
 		if(selectedTab!=null){
 			selectedTab.select();
 		}
@@ -100,7 +105,7 @@ public class ServiceListFragment extends Fragment {
 			public void onTabSelected(TabLayout.Tab tab) {
 				mListSelectedIndex = tab.getPosition();
 				if(tab.getText()!=null)
-					mListAdapter.refreshList("jacob", tab.getText().toString());
+					mListAdapter.refreshList(mSharedPreferences.getString("servantID",""), tab.getText().toString());
 			}
 
 			@Override
@@ -112,5 +117,26 @@ public class ServiceListFragment extends Fragment {
 
 		mServiceList.setLayoutManager(new LinearLayoutManager(context));
 		mServiceList.setAdapter(mListAdapter);
+
+		mListAdapter.setOnDealConfirmCompleteListener(new ServiceListAdapter.OnDealConfirmCompleteListener() {
+			@Override
+			public void onConfirmSuccess() {
+				mListAdapter.refreshList(mSharedPreferences.getString("servantID",""), mServiceListTypeTab.getTabAt(mListSelectedIndex).getText().toString());
+				Toast.makeText(getContext(),"操作成功",Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onConfirmFailed() {
+				mListAdapter.refreshList(mSharedPreferences.getString("servantID",""), mServiceListTypeTab.getTabAt(mListSelectedIndex).getText().toString());
+				Toast.makeText(getContext(),"操作失败",Toast.LENGTH_SHORT).show();
+			}
+		});
+
+		mListAdapter.setOnRefreshCompleteListener(new ServiceListAdapter.OnRefreshCompleteListener() {
+			@Override
+			public void onRefreshComplete() {
+
+			}
+		});
 	}
 }

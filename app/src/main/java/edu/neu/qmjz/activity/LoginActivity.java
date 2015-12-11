@@ -111,6 +111,7 @@ public class LoginActivity extends AppCompatActivity{
                     editor.commit();
                     Log.d("Login:",getSharedPreferences("shareDate",0).getString("servantName",""));
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    LoginActivity.this.finish();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

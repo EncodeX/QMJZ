@@ -1,7 +1,9 @@
 package edu.neu.qmjz.adapter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,8 +116,16 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 		serviceManager.addParameter("id", String.valueOf(temp.getId()));
 		serviceManager.addParameter("customerID", temp.getCustomerId());
 		serviceManager.addParameter("customerName", temp.getCustomerName());
-		serviceManager.addParameter("servantID", temp.getServantId());
-		serviceManager.addParameter("servantName", temp.getServantName());
+
+		if(temp.getServantId().equals("")){
+			SharedPreferences sharedPreferences = mContext.getSharedPreferences("shareData", 0);
+
+			serviceManager.addParameter("servantID", sharedPreferences.getString("servantID",""));
+			serviceManager.addParameter("servantName", sharedPreferences.getString("servantName",""));
+		}else {
+			serviceManager.addParameter("servantID", temp.getServantId());
+			serviceManager.addParameter("servantName", temp.getServantName());
+		}
 		serviceManager.addParameter("contactAddress", temp.getServiceAddress());
 		serviceManager.addParameter("contactPhone", temp.getPhoneNo());
 		serviceManager.addParameter("servicePrice", String.valueOf(temp.getSalary()));
@@ -124,6 +134,8 @@ public class GrabListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 		serviceManager.addParameter("remarks", temp.getRemark());
 		serviceManager.setConnectionListener(mGrabDeclareListener);
 		serviceManager.sendAction();
+
+		Log.d("Test","'" + temp.getServantId() + "' '" + temp.getServantName()+"'");
 	}
 
 	static class GrabListViewHolder extends RecyclerView.ViewHolder {

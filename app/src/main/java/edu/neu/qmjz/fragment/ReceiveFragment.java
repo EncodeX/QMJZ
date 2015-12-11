@@ -1,6 +1,7 @@
 package edu.neu.qmjz.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,12 +31,15 @@ public class ReceiveFragment extends Fragment {
 	RecyclerView mReceiveList;
 
 	private ReceiveListAdapter mListAdapter;
+	private SharedPreferences mSharedPreferences;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		mListAdapter = new ReceiveListAdapter(getContext());
+
+		mSharedPreferences = getContext().getSharedPreferences("shareData", 0);
 	}
 
 	@Nullable
@@ -53,7 +57,7 @@ public class ReceiveFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		mListAdapter.refreshList("jacob");
+		mListAdapter.refreshList(mSharedPreferences.getString("servantID",""));
 	}
 
 	@Override
@@ -80,25 +84,25 @@ public class ReceiveFragment extends Fragment {
 		mListAdapter.setActionResultListener(new ReceiveListAdapter.ActionResultListener() {
 			@Override
 			public void onGrabSucceeded() {
-				mListAdapter.refreshList("jacob");
+				mListAdapter.refreshList(mSharedPreferences.getString("servantID",""));
 				Toast.makeText(getContext(), "抢单成功", Toast.LENGTH_SHORT).show();
 			}
 
 			@Override
 			public void onGrabFailed() {
-				mListAdapter.refreshList("jacob");
+				mListAdapter.refreshList(mSharedPreferences.getString("servantID",""));
 				Toast.makeText(getContext(),"抢单失败",Toast.LENGTH_SHORT).show();
 			}
 
 			@Override
 			public void onRefuseSucceeded() {
-				mListAdapter.refreshList("jacob");
+				mListAdapter.refreshList(mSharedPreferences.getString("servantID",""));
 				Toast.makeText(getContext(),"已拒绝订单",Toast.LENGTH_SHORT).show();
 			}
 
 			@Override
 			public void onRefuseFailed() {
-				mListAdapter.refreshList("jacob");
+				mListAdapter.refreshList(mSharedPreferences.getString("servantID",""));
 				Toast.makeText(getContext(),"网络通信错误",Toast.LENGTH_SHORT).show();
 			}
 		});

@@ -250,7 +250,7 @@ public class AccountListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewH
         uploadUtils.sendPhoto(context);
     }
     public void addParameter(UploadUtils uploadUtils){
-        uploadUtils.addParameter("id",personData.getString("id","5"));
+        uploadUtils.addParameter("id",Integer.toString(personData.getInt("id", 0)));
         uploadUtils.addParameter("servantName",personData.getString("servantName",""));
         uploadUtils.addParameter("loginPassword",personData.getString("loginPassword",""));
         uploadUtils.addParameter("phoneNo",personData.getString("phoneNo",""));
