@@ -51,6 +51,7 @@ public class AccountListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewH
     private String[] title;
     private String[] text;
     private ArrayAdapter<String> adapter;
+
     public AccountListAdapter(Context context,List countryList) {
         Log.e("AccountListAdapter","AccountListAdapter()");
         this.context = context;
@@ -64,6 +65,7 @@ public class AccountListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewH
            personData.getString("phoneNo",""),personData.getString("servantMobil",""),personData.getString("servantCounty",""),
                 personData.getString("contactAddress",""),personData.getString("qqNumber",""),personData.getString("emailAddress","")};
     }
+
     private final LayoutInflater inflater;
 
     private enum ITEM_TYPE{ITEM_TYPE_TEXT,ITEM_TYPE_BTN,ITEM_TYPE_AREA};
@@ -136,6 +138,9 @@ public class AccountListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewH
             ((AccountBtnViewHolder)holder).account_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+//                    editor.remove("servantID");
+                    editor.putString("servantID","");
+                    editor.commit();
                     context.startActivity(new Intent(context, LoginActivity.class));
                 }
             });
@@ -285,7 +290,5 @@ public class AccountListAdapter extends  RecyclerView.Adapter<RecyclerView.ViewH
 
         }
     };
-
-
 
 }

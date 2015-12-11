@@ -142,6 +142,11 @@ public class LoginActivity extends AppCompatActivity{
               loginMessage();
            }
         });
+
+	    if(!personData.getString("servantID","").equals("")){
+		    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+		    LoginActivity.this.finish();
+	    }
     }
     private void loginMessage(){
         NetworkServiceManager serviceManager =
